@@ -9,13 +9,28 @@ import com.google.common.net.PercentEscaper;
 
 public class test {
 	public static void main(String[] args) {
-		Integer[] test = new Integer[] { 0, 14, 179, 25, 0, 283, 0, 280, 0 };
-		List<Integer> testList = Arrays.asList(test);
+		Integer[] test = new Integer[] { 0, 14, 179, 25, 0};
+		List<Integer> testList = new ArrayList<>(Arrays.asList(test));
 
-		Integer[] test1 = new Integer[] { 0, 200, 0, 236, 0, 226, 0 };
-		List<Integer> testList1 = Arrays.asList(test1);
-		System.err.println(performSwapForEachRoute(testList1));
+		Integer[] test1 = new Integer[] { 0, 200, 0};
+		List<Integer> testList1 = new ArrayList<>(Arrays.asList(test1));
+		// System.err.println(performSwapForEachRoute(testList1));
 
+		System.err.println("cur list " + testList1);
+		System.err.println("remove" + selectTask(testList1));
+		System.err.println("cur list " + testList1);
+
+		testList.addAll(testList.size(), testList1);
+		System.err.println(testList);
+
+	}
+
+	public static int selectTask(List<Integer> list) {
+		int n = list.size();
+		int pos = ThreadLocalRandom.current().nextInt(0, n);
+		int task = list.get(pos);
+		list.remove(pos);
+		return pos;
 	}
 
 	// 0 14 0 25 179 0 283 0 280 0

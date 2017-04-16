@@ -18,6 +18,7 @@ public class LocalSearch implements DataIO {
 	Evaluation evaluation;
 	interRouteSearch interSwap;
 	intraRouteSearch intraSwap;
+	routeGeneration irs;
 
 	public LocalSearch(BlackBoard bb) {
 		// TODO Auto-generated constructor stub
@@ -25,7 +26,16 @@ public class LocalSearch implements DataIO {
 		evaluation = new Evaluation(bb);
 		interSwap = new interRouteSearch(bb);
 		intraSwap = new intraRouteSearch(bb);
+		irs = new routeGeneration(data);
+	}
 
+	public SolutionsAll newLocalSearch(UpperPlan plan) {
+
+		SolutionsAll sa = irs.createSoltuions(plan);
+		Evaluation evaluation = new Evaluation(data);
+		evaluation.costCal(sa);
+
+		return sa;
 	}
 
 	public void search(UpperPlan up) {
@@ -49,25 +59,29 @@ public class LocalSearch implements DataIO {
 		System.err.println("Inter search end best--" + " :" + curBestSolution.toString());
 		DataOutPut.writeFile(outputFileName + "interbest", curBestSolution.getOutput(), false);
 		System.err.println("***************************************************************");
-		System.err.println("intra swap test" + "--------" + "\n");
-
-		SolutionsAll intraswapBest = generateNewByIntraSwap(curBestSolution);
-		intraswapBest = evaluation.costCal(intraswapBest);
-		System.err.println("Intra search  start best--" + " :" + intraswapBest.toString());
-		long curIntraBestCost = intraswapBest.getTotalCost();
-		int intraCounter = 0;
-		while (intraCounter < 500000) {
-			SolutionsAll nextIntraSolution = generateNewByInterSwap(intraswapBest);
-			nextIntraSolution = evaluation.costCal(nextIntraSolution);
-			if (nextIntraSolution.getTotalCost() < curIntraBestCost) {
-				intraswapBest = nextIntraSolution;
-				curIntraBestCost = nextIntraSolution.getTotalCost();
-				System.err.println("Intra search cur best--" + " :" + intraswapBest.toString());
-			}
-			intraCounter++;
-		}
-		System.err.println("Intra search end best--" + " :" + intraswapBest.toString());
-		DataOutPut.writeFile(outputFileName, intraswapBest.getOutput(), false);
+		// System.err.println("intra swap test" + "--------" + "\n");
+		//
+		// SolutionsAll intraswapBest = generateNewByIntraSwap(curBestSolution);
+		// intraswapBest = evaluation.costCal(intraswapBest);
+		// System.err.println("Intra search start best--" + " :" +
+		// intraswapBest.toString());
+		// long curIntraBestCost = intraswapBest.getTotalCost();
+		// int intraCounter = 0;
+		// while (intraCounter < 500000) {
+		// SolutionsAll nextIntraSolution =
+		// generateNewByInterSwap(intraswapBest);
+		// nextIntraSolution = evaluation.costCal(nextIntraSolution);
+		// if (nextIntraSolution.getTotalCost() < curIntraBestCost) {
+		// intraswapBest = nextIntraSolution;
+		// curIntraBestCost = nextIntraSolution.getTotalCost();
+		// System.err.println("Intra search cur best--" + " :" +
+		// intraswapBest.toString());
+		// }
+		// intraCounter++;
+		// }
+		// System.err.println("Intra search end best--" + " :" +
+		// intraswapBest.toString());
+		DataOutPut.writeFile(outputFileName, curBestSolution.getOutput(), false);
 	}
 
 	public SolutionsAll generateNewByInterSwap(SolutionsAll oldSolutions) {

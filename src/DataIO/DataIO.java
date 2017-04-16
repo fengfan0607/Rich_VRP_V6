@@ -1,20 +1,19 @@
 package DataIO;
 
 public interface DataIO {
-	public static String instance = "03";
-	public static String fileName = "testInstance/ParticipantsSuite/ORTEC_TEST_" + instance + ".txt";
-	public static String title = "DATASET = ORTEC Test Set" + "\n" + "NAME = Instance " + instance + "\n\n";
+	public static String instance = "05";
+	// public static String fileName =
+	// "testInstance/ParticipantsSuite/ORTEC_TEST_" + instance + ".txt";
+	// public static String title = "DATASET = ORTEC Test Set" + "\n" + "NAME =
+	// Instance " + instance + "\n\n";
 
 	public static String outputFileName = "testInstance/ParticipantsSuite/solution.txt";
+	public static String solutionFileName = "testInstance/ParticipantsSuite/ORTEC_TEST_" + instance + ".sol.txt";
 
 	// all time best competition
-	// public static String fileName =
-	// "testInstance/ParticipantsSuite/VeRoLog_r100d5_2.txt";
-	// public static String title = "DATASET = All time best instance set
-	// VeRoLog competition" + "\n"
-	// + "NAME = tools over distance over vehicle days over vehicles with 100
-	// requests over 5 days" + "\n\n";
-
+	public static String fileName = "testInstance/ParticipantsSuite/VeRoLog_r100d5_1.txt";
+	public static String title = "DATASET = All time best instance set VeRoLog competition" + "\n"
+			+ "NAME = tools over distance over vehicle days over vehicles with 100 requests over 5 days" + "\n\n";
 	public static int DAYS = 0;
 	public static int CAPACITY = 1;
 	public static int MAX_TRIP_DISTANCE = 2;

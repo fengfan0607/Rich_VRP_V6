@@ -149,7 +149,8 @@ public class UpperLevelPlanUtil implements DataIO {
 
 		int cost = 0;
 		for (int k = 0; k < numberOfTools; k++) {
-			System.err.println("tool cost" + data.getToolList().get(k).getCostOfTools());
+			// System.err.println("tool cost" +
+			// data.getToolList().get(k).getCostOfTools());
 			cost += maximumToolUsed[k] * data.getToolList().get(k).getCostOfTools();
 		}
 		return cost;
