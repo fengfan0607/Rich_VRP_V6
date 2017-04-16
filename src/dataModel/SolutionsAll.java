@@ -6,8 +6,8 @@ public class SolutionsAll {
 
 	private SolutionForEachDay[] solutions;
 	private long totalCost;
-	private int totalDistance;
-	private int totalToolUsed;
+	private long totalDistance;
+	private long totalToolUsed;
 	private int totalVehicle;
 	private int maximumVehiclPerDay;
 	private int ID;
@@ -47,11 +47,11 @@ public class SolutionsAll {
 		this.totalCost = totalCaose;
 	}
 
-	public int getTotalDistance() {
+	public long getTotalDistance() {
 		return totalDistance;
 	}
 
-	public void setTotalDistance(int totalDistance) {
+	public void setTotalDistance(long totalDistance) {
 		this.totalDistance = totalDistance;
 	}
 
@@ -68,11 +68,11 @@ public class SolutionsAll {
 		// TODO Auto-generated constructor stub
 	}
 
-	public int getTotalToolUsed() {
+	public long getTotalToolUsed() {
 		return totalToolUsed;
 	}
 
-	public void setTotalToolUsed(int totalToolUsed) {
+	public void setTotalToolUsed(long totalToolUsed) {
 		this.totalToolUsed = totalToolUsed;
 	}
 

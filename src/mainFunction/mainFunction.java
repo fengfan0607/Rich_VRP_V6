@@ -16,27 +16,32 @@ import UpperLevelPlan.UpperPlanGen;
 import dataModel.BlackBoard;
 import dataModel.SolutionsAll;
 import dataModel.UpperPlan;
+import test.test;
 
 public class mainFunction implements DataIO {
+	public static String title;
+	public static String testFile;
 	public static void main(String[] args) {
+		if(runCase){
+			title=titleTest;
+			testFile = fileNameTest;
+		}else{
+			title = titleAllTimeBest;
+			testFile = fileNameAllTimeBest;
+		}
 		DataOutPut.writeFile(outputFileName, title, true);
-		DataRead dRead = new DataRead();
+		DataRead dRead = new DataRead(testFile);
 		System.err.println("read data .....");
 		BlackBoard data = dRead.readData(new BlackBoard());
 		UpperPlanGen planGen = new UpperPlanGen(data);
 		UpperPlan plan = new UpperPlan();
-		// plan.setPlans(readSolution.readPlan(data.getConfig()));
-		// plan.setID(0);
 		LocalSearch ls = new LocalSearch(data);
 		List<SolutionsAll> solutionSet = new ArrayList<>();
-		long bestCost = 439643056665l;
+		long bestCost = Long.MAX_VALUE;
 		SolutionsAll bestSolution = null;
-//		plan = planGen.planGen();
-//		routeGeneration rg = new routeGeneration(data);
-//		rg.routeGen(plan.getPlans()[2]);
-		// SolutionsAll sa = null;
-		for (int i = 0; i < 5000; i++) {
+		for (int i = 0; i < 10; i++) {
 			plan = planGen.planGen();
+			plan.setID(i+1);
 			SolutionsAll sa = ls.newLocalSearch(plan);
 			solutionSet.add(sa);
 			if (sa.getTotalCost() < bestCost) {
@@ -44,12 +49,12 @@ public class mainFunction implements DataIO {
 				bestCost = bestSolution.getTotalCost();
 				System.err.println("current best" + bestSolution.toString());
 			}
-			// System.err.println();
 		}
 		for (SolutionsAll sa : solutionSet) {
 			System.err.println(sa.toString());
 		}
-		System.err.println("best cost" + bestCost);
+		System.err.println("best solotuion" + bestSolution.toString());
+//		System.err.println(bestSolution.getOutput());
 		DataOutPut.writeFile(outputFileName, bestSolution.getOutput(), false);
 
 	}

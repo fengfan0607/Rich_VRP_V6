@@ -29,8 +29,8 @@ public class DataRead implements DataIO {
 	public Depot depot;
 	public Distance distance;
 	public int[] toolStocks;
-
-	public DataRead() {
+	public String fileName;
+	public DataRead(String file) {
 		// TODO Auto-generated constructor stub
 		config = new int[CONFIG_SIZE];
 		toolList = new ArrayList<>();
@@ -39,6 +39,7 @@ public class DataRead implements DataIO {
 		requestToolMapping = new TreeMap<>();
 		customers = new ArrayList<>();
 		distance = new Distance();
+		this.fileName = file;
 	}
 
 	public BlackBoard readData(BlackBoard blackBoard) {

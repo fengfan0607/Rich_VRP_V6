@@ -39,7 +39,7 @@ public class LocalSearch implements DataIO {
 	}
 
 	public void search(UpperPlan up) {
-		DataOutPut.writeFile(outputFileName, title, true);
+//		DataOutPut.writeFile(outputFileName, title, true);
 		initialFeasiblePlanGen init = new initialFeasiblePlanGen(data);
 		SolutionsAll curBestSolution = init.intialSolutionGen(up);
 		curBestSolution = evaluation.costCal(curBestSolution);

@@ -2,6 +2,7 @@ package LowerLevelPlan;
 
 import java.net.Inet4Address;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.TreeMap;
@@ -27,7 +28,8 @@ public class routeGeneration implements DataIO {
 	int maximumAllowedTravelDistance;
 	int[] toolSize;
 	List<Request> requests;
-
+	EvaluationSolutionPerDay espd ;
+	int[] toolStock;
 	public routeGeneration(BlackBoard bb) {
 		// TODO Auto-generated constructor stub
 
@@ -42,21 +44,57 @@ public class routeGeneration implements DataIO {
 			toolSize[i] = dataModel.getToolList().get(i).getSize();
 		}
 		requests = dataModel.getRequests();
+		espd = new EvaluationSolutionPerDay(dataModel);
+		toolStock = dataModel.getToolStock();
 	}
 
 	public SolutionsAll createSoltuions(UpperPlan up) {
 		int[][] plans = up.getPlans();
 		SolutionForEachDay[] solutions = new SolutionForEachDay[up.getPlans().length];
 		for (int i = 0; i < plans.length; i++) {
-			SolutionForEachDay sed = new SolutionForEachDay();
-			TreeMap<Integer, List<Integer>> vechileRoutes = routeGen(plans[i]);
-			sed.setVehicleRoutes(vechileRoutes);
-			sed.setDayID(i + 1);
-			solutions[i] = sed;
+			int counter =100;
+			long curBestCost = Long.MAX_VALUE;
+			SolutionForEachDay curBest = new SolutionForEachDay();
+			while(counter-->0){
+			
+				SolutionForEachDay sed = new SolutionForEachDay();
+				TreeMap<Integer, List<Integer>> vechileRoutes = routeGen(plans[i]);
+				sed.setVehicleRoutes(vechileRoutes);
+				sed.setDayID(i + 1);
+				sed = getObjForDay(solutions, i, sed); 
+				if(checkToolUse(sed.getToolInUsePerDay())&&sed.getTotalCostPerDay()<curBestCost){
+					curBest=sed;
+					curBestCost=sed.getTotalCostPerDay();
+				}
+			}
+			solutions[i] = curBest;
+			System.err.println(curBest.toString());
 		}
 		SolutionsAll sa = new SolutionsAll(1);
 		sa.setSolutions(solutions);
 		return sa;
+	}
+	
+	public boolean checkToolUse(int[] curUse){
+		for(int i=0;i<toolStock.length;i++){
+			if(curUse[i]>toolStock[i]){
+				return false;
+			}
+		}
+		return true;
+		
+	}
+	public SolutionForEachDay getObjForDay(SolutionForEachDay[] solutions, int day,SolutionForEachDay sed){
+		int[] dynamicStock = new int[dataModel.getToolList().size()];
+		if (day == 0) {
+			dynamicStock = Arrays.copyOf(dataModel.getToolStock(), dataModel.getToolStock().length);
+		} else {
+			dynamicStock = Arrays.copyOf(solutions[day - 1].getDynamicStock(),
+					solutions[day - 1].getDynamicStock().length);
+		}
+		espd.setDynamicStock(dynamicStock);
+		sed = espd.costCalPerDay(sed);
+		return sed;
 	}
 
 	public TreeMap<Integer, List<Integer>> routeGen(int[] dayPlannedTasks) {
@@ -123,6 +161,10 @@ public class routeGeneration implements DataIO {
 			// routeSpec rNew = new routeSpec();
 			List<Integer> newRoute = new ArrayList<>(splitList.get(i).getRoute());
 			while (confirmed < splitList.size() && dis < config[MAX_TRIP_DISTANCE]) {
+				int stucknumber =0;
+				if(stucknumber++== 100000){
+					System.err.println("stuck in combine route");
+				}
 				int posNew = getRandomNum(splitList.size(), i);
 				routeSpec anotherRout = splitList.get(posNew);
 				if (flag[posNew]) {
