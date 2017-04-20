@@ -41,7 +41,7 @@ public class UpperLevelPlanUtil implements DataIO {
 		for (int i = 0; i < numberOfRequest; i++) {
 			requestsFlag[i] = false;
 		}
-		plan = new int[numberOfDays][numberOfRequest];
+		
 		numberOfTools = config[NUM_OF_TOOLS];
 		dynamicStock = new int[data.getToolList().size()];
 		depotStock = new int[data.getToolList().size()];
@@ -54,10 +54,12 @@ public class UpperLevelPlanUtil implements DataIO {
 			List<Integer[]> list = new ArrayList<>();
 			associateList.add(list);
 		}
+		plan = new int[numberOfDays][numberOfRequest];
 	}
 
 	public UpperPlan planCreate() {
 		// TODO Auto-generated method stub
+	
 		UpperPlan up = new UpperPlan();
 		// insert fixed day delivery requests
 		TreeMap<Integer, List<Integer>> fixedDayPlan = data.getFixedDayDelivery();
@@ -92,7 +94,7 @@ public class UpperLevelPlanUtil implements DataIO {
 				continue;
 			} else {
 				Request curReq = requests.get(i);
-				// int day = curReq.getStart_Time() - 1;
+//				int day = curReq.getEnd_Time();
 				int day = ThreadLocalRandom.current().nextInt(curReq.getStart_Time(), curReq.getEnd_Time() + 1);
 				confirmPlan(day - 1, curReq);
 				int dd = day - 1;
@@ -115,20 +117,6 @@ public class UpperLevelPlanUtil implements DataIO {
 		return up;
 	}
 
-	// public void findAssociationPickedUpDelivery(int day, Request curRequest)
-	// {
-	// List<Integer> associateRequestForPickUpDelivery =
-	// curRequest.getAssociateRequestForPickUpDelivery();
-	// if (associateRequestForPickUpDelivery.size() > 0) {
-	// for (int i = 0; i < associateRequestForPickUpDelivery.size(); i++) {
-	// int requestID = associateRequestForPickUpDelivery.get(i);
-	// Request associateRequest = requests.get(requestID - 1);
-	// if (!requestsFlag[associateRequest.getId() - 1]) {
-	// confirmPlan(day + curRequest.getNumOfDaysRequest(), associateRequest);
-	// }
-	// }
-	// }
-	// }
 
 	public Request findAssociationPickedUpDelivery1(Request curRequest) {
 		List<Integer> associateRequestForPickUpDelivery = curRequest.getAssociateRequestForPickUpDelivery();
@@ -193,7 +181,7 @@ public class UpperLevelPlanUtil implements DataIO {
 					maximumToolUsed[k] = toolUsed[k];
 				}
 			}
-			System.err.println("day：" + (i + 1) + "estimated tool uesed" + Arrays.toString(toolUsed));
+			System.err.println("day" + (i + 1) + "estimated tool uesed" + Arrays.toString(toolUsed));
 		}
 
 		int cost = 0;
@@ -219,5 +207,5 @@ public class UpperLevelPlanUtil implements DataIO {
 		}
 		return maximumRequestPerDay;
 	}
-
+	
 }

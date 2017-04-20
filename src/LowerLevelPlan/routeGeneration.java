@@ -64,9 +64,8 @@ public class routeGeneration implements DataIO {
 			SolutionForEachDay curBest = new SolutionForEachDay();
 			while (counter-- > 0) {
 				SolutionForEachDay sed = new SolutionForEachDay();
-				// TreeMap<Integer, List<Integer>> vechileRoutes =
-				// minimizeDistance.routeGen(plans[i]);
-				TreeMap<Integer, List<Integer>> vechileRoutes = minimizeToolUse.routeGen(plans[i]);
+				 TreeMap<Integer, List<Integer>> vechileRoutes =minimizeDistance.routeGen(plans[i]);
+//				TreeMap<Integer, List<Integer>> vechileRoutes = minimizeToolUse.routeGen(plans[i]);
 				sed.setVehicleRoutes(vechileRoutes);
 				sed.setDayID(i + 1);
 				sed = getObjForDay(solutions, i, sed, preDynamicStock.clone());

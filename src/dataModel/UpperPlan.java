@@ -8,6 +8,15 @@ public class UpperPlan {
 	private int estimateToolCost;
 	private int estimateAvgRequstPerDay;
 	private List<List<Integer[]>> associationEachDay;
+	private int[][] toolUsed;
+
+	public int[][] getToolUsed() {
+		return toolUsed;
+	}
+
+	public void setToolUsed(int[][] toolUsed) {
+		this.toolUsed = toolUsed;
+	}
 
 	public List<List<Integer[]>> getAssociationEachDay() {
 		return associationEachDay;
@@ -56,29 +65,10 @@ public class UpperPlan {
 
 	private int ID;
 
+	@Override
 	public String toString() {
-		StringBuilder sBuilder = new StringBuilder();
-		for (int i = 0; i < plans.length; i++) {
-			for (int j = 0; j < plans[0].length; j++) {
-				sBuilder.append(plans[i][j] + "\t");
-			}
-			sBuilder.append("\n");
-		}
-
-		for (int i = 0; i < associationEachDay.size(); i++) {
-			List<Integer[]> list = associationEachDay.get(i);
-			if (list.size() > 0) {
-				sBuilder.append("day" + (i + 1));
-				for (int j = 0; j < list.size(); j++) {
-					sBuilder.append(Arrays.toString(list.get(j)) + ",");
-				}
-				sBuilder.append("\n");
-			}
-		}
-		sBuilder.append("plan horizion ID = " + ID + "\n");
-		sBuilder.append("estimate tool cost = " + estimateToolCost + "\n");
-		sBuilder.append("estimated maximum request per day = " + estimateAvgRequstPerDay + "\n");
-
-		return sBuilder.toString();
+		return "UpperPlan [plans=" + Arrays.toString(plans) + ", estimateToolCost=" + estimateToolCost
+				+ ", estimateAvgRequstPerDay=" + estimateAvgRequstPerDay + ", associationEachDay=" + associationEachDay
+				+ ", toolUsed=" + Arrays.toString(toolUsed) + ", ID=" + ID + "]";
 	}
 }

@@ -14,13 +14,21 @@ public class Request {
 	private List<Integer> associateRequestForDeliveryPickUp;
 	private int customerID;
 	private Set<Integer> associateSet;
-	private List<Integer> nearByRequests;
+	private Set<Integer> nearByRequests;
+	private List<Integer> mustTogether;
+	public List<Integer> getMustTogether() {
+		return mustTogether;
+	}
 
-	public List<Integer> getNearByRequests() {
+	public void setMustTogether(List<Integer> mustTogether) {
+		this.mustTogether = mustTogether;
+	}
+
+	public Set<Integer> getNearByRequests() {
 		return nearByRequests;
 	}
 
-	public void setNearByRequests(List<Integer> nearByRequests) {
+	public void setNearByRequests(Set<Integer> nearByRequests) {
 		this.nearByRequests = nearByRequests;
 	}
 
@@ -62,7 +70,8 @@ public class Request {
 				+ numOfDaysRequest + ", requestToolKind=" + requestToolKind + ", requestToolNumber=" + requestToolNumber
 				+ ", associateRequestForPickUpDelivery=" + associateRequestForPickUpDelivery
 				+ ", associateRequestForDeliveryPickUp=" + associateRequestForDeliveryPickUp + ", customerID="
-				+ customerID + ", associateSet=" + associateSet + ", nearByRequests=" + nearByRequests + "]";
+				+ customerID + ", associateSet=" + associateSet + ", nearByRequests=" + nearByRequests
+				+ ", mustTogether=" + mustTogether + "]"+"\n";
 	}
 
 	public int getEnd_Time() {

@@ -1,5 +1,6 @@
 package UpperLevelPlan;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -25,6 +26,7 @@ public class UpperLevelPlanUtil2 implements DataIO {
 	int[] depotStock;
 	int[] dynamicStock;
 	int[] config;
+	List<List<Integer[]>> associateList;
 
 	public UpperLevelPlanUtil2(BlackBoard bb) {
 		// TODO Auto-generated constructor stub
@@ -47,6 +49,11 @@ public class UpperLevelPlanUtil2 implements DataIO {
 			depotStock[i] = data.getToolList().get(i).getNumOfTools();
 			dynamicStock[i] = data.getToolList().get(i).getNumOfTools();
 		}
+		associateList = new ArrayList<>();
+		for (int i = 0; i < numberOfDays; i++) {
+			List<Integer[]> list = new ArrayList<>();
+			associateList.add(list);
+		}
 	}
 
 	public UpperPlan planCreate() {
@@ -62,19 +69,23 @@ public class UpperLevelPlanUtil2 implements DataIO {
 			for (int i = 0; i < list.size(); i++) {
 				int rID = list.get(i);
 				Request curReq = requests.get(rID - 1);
-				confirmPlan(day - 1, curReq);
-				int dd = day - 1;
-				while (curReq.getAssociateRequestForPickUpDelivery().size() > 0) {
-					Request associateCurReq = findAssociationPickedUpDelivery1(curReq);
-					if (!requestsFlag[associateCurReq.getId() - 1]) {
-						confirmPlan(dd + curReq.getNumOfDaysRequest(), associateCurReq);
+				if (!requestsFlag[curReq.getId() - 1]) {
+					confirmPlan(day - 1, curReq);
+					int dd = day - 1;
+					while (curReq.getAssociateRequestForPickUpDelivery().size() > 0) {
+						Request associateCurReq = findAssociationPickedUpDelivery1(curReq);
+						if (!requestsFlag[associateCurReq.getId() - 1]) {
+							confirmPlan(dd + curReq.getNumOfDaysRequest(), associateCurReq);
+							updateAssociateList(dd + curReq.getNumOfDaysRequest(), curReq.getId(),
+									associateCurReq.getId());
+						}
+						dd = dd + curReq.getNumOfDaysRequest();
+						curReq = associateCurReq;
 					}
-					curReq = associateCurReq;
-					dd = dd + curReq.getNumOfDaysRequest() - 1;
 				}
+
 			}
 		}
-		print();
 		// insert unfixed request
 		for (int i = 0; i < requests.size(); i++) {
 			if (requestsFlag[i]) {
@@ -82,28 +93,25 @@ public class UpperLevelPlanUtil2 implements DataIO {
 			} else {
 				Request curReq = requests.get(i);
 				// int day = curReq.getStart_Time() - 1;
-				int day = ThreadLocalRandom.current().nextInt(curReq.getStart_Time(), curReq.getEnd_Time() + 1) - 1;
-				confirmPlan(day, curReq);
+				int day = ThreadLocalRandom.current().nextInt(curReq.getStart_Time(), curReq.getEnd_Time() + 1);
+				confirmPlan(day - 1, curReq);
+				int dd = day - 1;
+				while (curReq.getAssociateRequestForPickUpDelivery().size() > 0) {
+					Request associateCurReq = findAssociationPickedUpDelivery1(curReq);
+					if (!requestsFlag[associateCurReq.getId() - 1]) {
+						confirmPlan(dd + curReq.getNumOfDaysRequest(), associateCurReq);
+						updateAssociateList(dd + curReq.getNumOfDaysRequest(), curReq.getId(), associateCurReq.getId());
+					}
+					dd = dd + curReq.getNumOfDaysRequest();
+					curReq = associateCurReq;
+				}
 			}
 		}
 		up.setPlans(plan);
 		up.setEstimateAvgRequstPerDay(requestDistributionCal(up));
 		up.setEstimateToolCost(toolUsedCal(up));
-		// System.err.println(up);
+		up.setAssociationEachDay(associateList);
 		return up;
-	}
-
-	public void findAssociationPickedUpDelivery(int day, Request curRequest) {
-		List<Integer> associateRequestForPickUpDelivery = curRequest.getAssociateRequestForPickUpDelivery();
-		if (associateRequestForPickUpDelivery.size() > 0) {
-			for (int i = 0; i < associateRequestForPickUpDelivery.size(); i++) {
-				int requestID = associateRequestForPickUpDelivery.get(i);
-				Request associateRequest = requests.get(requestID - 1);
-				if (!requestsFlag[associateRequest.getId() - 1]) {
-					confirmPlan(day + curRequest.getNumOfDaysRequest(), associateRequest);
-				}
-			}
-		}
 	}
 
 	public Request findAssociationPickedUpDelivery1(Request curRequest) {
@@ -121,20 +129,27 @@ public class UpperLevelPlanUtil2 implements DataIO {
 		updateCounter();
 	}
 
+	public void updateAssociateList(int day, int pickUpReq, int deliverReq) {
+//		List<Integer[]> curDay = associateList.get(day);
+		Integer[] ass = new Integer[] { -1*pickUpReq, deliverReq };
+		associateList.get(day).add(ass);
+//		associateList.add(day, curDay);
+	}
+
 	public void updateCounter() {
 		this.counter++;
 	}
 
-	// public void print(int[][] plans) {
-	// StringBuilder sBuilder = new StringBuilder();
-	// for (int i = 0; i < plans.length; i++) {
-	// for (int j = 0; j < plans[0].length; j++) {
-	// sBuilder.append(plans[i][j] + ",");
-	// }
-	// sBuilder.append("\n");
-	// }
-	// System.err.println(sBuilder.toString());
-	// }
+	public void print(int[][] plans) {
+		StringBuilder sBuilder = new StringBuilder();
+		for (int i = 0; i < plans.length; i++) {
+			for (int j = 0; j < plans[0].length; j++) {
+				sBuilder.append(plans[i][j] + ",");
+			}
+			sBuilder.append("\n");
+		}
+		System.err.println(sBuilder.toString());
+	}
 
 	public int toolUsedCal(UpperPlan ph) {
 		int[] maximumToolUsed = new int[numberOfTools];
@@ -162,7 +177,7 @@ public class UpperLevelPlanUtil2 implements DataIO {
 					maximumToolUsed[k] = toolUsed[k];
 				}
 			}
-			System.err.println("day：" + (i + 1) + "estimated tool uesed" + Arrays.toString(toolUsed));
+			System.err.println("day" + (i + 1) + "estimated tool uesed" + Arrays.toString(toolUsed));
 		}
 
 		int cost = 0;
@@ -172,6 +187,40 @@ public class UpperLevelPlanUtil2 implements DataIO {
 			cost += maximumToolUsed[k] * data.getToolList().get(k).getCostOfTools();
 		}
 		return cost;
+	}
+	public boolean checkToolUsed(UpperPlan ph) {
+		int[] maximumToolUsed = new int[numberOfTools];
+		int[][] plan = ph.getPlans();
+		int[][] toolUsedAll = new int[numberOfDays][numberOfTools];
+		for (int i = 0; i < plan.length; i++) {
+			int[] toolUsed = new int[numberOfTools];
+			for (int j = 0; j < data.getRequests().size(); j++) {
+				if (plan[i][j] == 0) {
+					continue;
+				} else {
+					Request request = data.getRequests().get(j);
+					int toolKind = request.getRequestToolKind();
+					int toolNumber = request.getRequestToolNumber();
+					if (plan[i][j] == 1) {
+						dynamicStock[toolKind - 1] -= toolNumber;
+					} else {
+						dynamicStock[toolKind - 1] += toolNumber;
+					}
+				}
+			}
+
+			for (int k = 0; k < numberOfTools; k++) {
+				toolUsed[k] = depotStock[k] - dynamicStock[k];
+				if (toolUsed[k] > depotStock[k]) {
+					return false;
+				}
+			}
+			toolUsedAll[i] =toolUsed; 
+			System.err.println("day" + (i + 1) + "estimated tool uesed" + Arrays.toString(toolUsed));
+		}
+		ph.setToolUsed(toolUsedAll);
+		return true;
+
 	}
 
 	public int requestDistributionCal(UpperPlan up) {
@@ -189,16 +238,9 @@ public class UpperLevelPlanUtil2 implements DataIO {
 		return maximumRequestPerDay;
 	}
 
-	public void print() {
-		StringBuilder sBuilder = new StringBuilder();
-		for (int i = 0; i < plan.length; i++) {
-			for (int j = 0; j < plan[0].length; j++) {
-				sBuilder.append(plan[i][j] + "\t");
-			}
-			sBuilder.append("\n");
-		}
-
-		System.err.println(sBuilder.toString());
+	public UpperPlan adjustPlan(UpperPlan curPlan){
+		int[][] curToolUsed= curPlan.getToolUsed();
+		
 	}
 
 }
