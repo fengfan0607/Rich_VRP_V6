@@ -97,7 +97,8 @@ public class SolutionForEachDay {
 	public String toString() {
 		return "SolutionForEachDay [dayID=" + dayID + ", totalCostPerDay=" + totalCostPerDay + ", toolInUsePerDay="
 				+ Arrays.toString(toolInUsePerDay) + ", totalDistance=" + totalDistance + ", totalNumberOfVehicle="
-				+ totalNumberOfVehicle + ", toolCost=" + toolCost + "]";
+				+ totalNumberOfVehicle + ", toolCost=" + toolCost + ", dynamicStock=" + Arrays.toString(dynamicStock)
+				+ "]";
 	}
 
 }

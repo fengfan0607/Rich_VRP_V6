@@ -66,6 +66,7 @@ public class EvaluationSolutionPerDay implements DataIO {
 		sed.setTotalDistance(totalDistance);
 		sed.setOutput(manufactorSed(sed));
 		sed.setDynamicStock(dynamicStock);
+//		System.err.println("cal" + Arrays.toString(dynamicStock));
 		return sed;
 	}
 

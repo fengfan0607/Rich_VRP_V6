@@ -5,8 +5,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
 
 import com.google.common.base.CharMatcher;
@@ -30,6 +34,7 @@ public class DataRead implements DataIO {
 	public Distance distance;
 	public int[] toolStocks;
 	public String fileName;
+
 	public DataRead(String file) {
 		// TODO Auto-generated constructor stub
 		config = new int[CONFIG_SIZE];
@@ -98,6 +103,7 @@ public class DataRead implements DataIO {
 						String[] splited = line.split("\\s+");
 						request.setAssociateRequestForPickUpDelivery(new ArrayList<>());
 						request.setAssociateRequestForDeliveryPickUp(new ArrayList<>());
+						request.setAssociateSet(new HashSet<Integer>());
 						request.setId(Integer.valueOf(splited[0]));
 						request.setCustomerID(Integer.valueOf(splited[1]));
 						request.setStart_Time(Integer.valueOf(splited[2]));
@@ -115,7 +121,25 @@ public class DataRead implements DataIO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		// int[][] distanceValue = new
+		// int[config[NUM_OF_CUSTOMER]][config[NUM_OF_CUSTOMER]];
+		distance.setDistance(distanceCal());
+		requestHandle();
+		findAssociation();
+		blackBoard.setConfig(config);
+		blackBoard.setDistance(distance.getDistance());
+		blackBoard.setToolList(toolList);
+		blackBoard.setRequests(requests);
+		blackBoard.setToolStock(toolStocks);
+		blackBoard.setRequestToolMapping(requestToolMapping);
+		blackBoard.setFixedDayDelivery(fixedDayDelivery);
+		// System.err.println(blackBoard);
+		return blackBoard;
+	}
 
+	public int[][] distanceCal() {
+		int maxDistance = Integer.MIN_VALUE;
+		int minDistance = Integer.MAX_VALUE;
 		int[][] distanceValue = new int[config[NUM_OF_CUSTOMER]][config[NUM_OF_CUSTOMER]];
 		for (int i = 0; i < config[NUM_OF_CUSTOMER]; i++) {
 			int id1;
@@ -150,20 +174,17 @@ public class DataRead implements DataIO {
 				double b = Math.pow(y1 - y2, 2);
 				// System.err.println(id1 + "," + id2);
 				distanceValue[id1][id2] = (int) Math.sqrt(a + b);
+				maxDistance = Math.max(distanceValue[id1][id2], maxDistance);
+				if (distanceValue[id1][id2] != 0) {
+					minDistance = Math.min(distanceValue[id1][id2], minDistance);
+				}
+
 			}
 		}
-		distance.setDistance(distanceValue);
-		requestHandle();
-		findAssociation();
-		blackBoard.setConfig(config);
-		blackBoard.setDistance(distance.getDistance());
-		blackBoard.setToolList(toolList);
-		blackBoard.setRequests(requests);
-		blackBoard.setToolStock(toolStocks);
-		blackBoard.setRequestToolMapping(requestToolMapping);
-		blackBoard.setFixedDayDelivery(fixedDayDelivery);
-		// System.err.println(blackBoard);
-		return blackBoard;
+		System.err.println("The maximum distance is " + maxDistance);
+		System.err.println("The minimum distance is " + minDistance);
+		System.err.println("The neighbourhood circle " + (maxDistance - minDistance) / 10);
+		return distanceValue;
 	}
 
 	public void readConfig(int lineNum, String line) {
@@ -207,6 +228,7 @@ public class DataRead implements DataIO {
 						&& r1.getEnd_Time() + r1.getNumOfDaysRequest() <= r2.getEnd_Time()) {
 					// r1 pickup r2 delivery
 					r1.getAssociateRequestForPickUpDelivery().add(r2.getId());
+					r1.getAssociateSet().add(r2.getId());
 					// r2 delivery r1 pick up
 					r2.getAssociateRequestForDeliveryPickUp().add(r1.getId());
 				} else if (r1.getRequestToolKind() == r2.getRequestToolKind()
@@ -215,6 +237,7 @@ public class DataRead implements DataIO {
 						&& r2.getEnd_Time() + r2.getNumOfDaysRequest() <= r1.getEnd_Time()) {
 					// r2 pickup r1 delivery
 					r2.getAssociateRequestForPickUpDelivery().add(r1.getId());
+					r2.getAssociateSet().add(r1.getId());
 					// r1 delivery r2 pick up
 					r1.getAssociateRequestForDeliveryPickUp().add(r2.getId());
 				}

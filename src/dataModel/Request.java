@@ -1,6 +1,7 @@
 package dataModel;
 
 import java.util.List;
+import java.util.Set;
 
 public class Request {
 	private int id;
@@ -12,6 +13,24 @@ public class Request {
 	private List<Integer> associateRequestForPickUpDelivery;
 	private List<Integer> associateRequestForDeliveryPickUp;
 	private int customerID;
+	private Set<Integer> associateSet;
+	private List<Integer> nearByRequests;
+
+	public List<Integer> getNearByRequests() {
+		return nearByRequests;
+	}
+
+	public void setNearByRequests(List<Integer> nearByRequests) {
+		this.nearByRequests = nearByRequests;
+	}
+
+	public Set<Integer> getAssociateSet() {
+		return associateSet;
+	}
+
+	public void setAssociateSet(Set<Integer> associateSet) {
+		this.associateSet = associateSet;
+	}
 
 	public int getCustomerID() {
 		return customerID;
@@ -41,7 +60,9 @@ public class Request {
 	public String toString() {
 		return "Request [id=" + id + ", start_Time=" + start_Time + ", end_Time=" + end_Time + ", numOfDaysRequest="
 				+ numOfDaysRequest + ", requestToolKind=" + requestToolKind + ", requestToolNumber=" + requestToolNumber
-				+ ", cutomerID=" + customerID + "]";
+				+ ", associateRequestForPickUpDelivery=" + associateRequestForPickUpDelivery
+				+ ", associateRequestForDeliveryPickUp=" + associateRequestForDeliveryPickUp + ", customerID="
+				+ customerID + ", associateSet=" + associateSet + ", nearByRequests=" + nearByRequests + "]";
 	}
 
 	public int getEnd_Time() {

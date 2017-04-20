@@ -1,3 +1,3 @@
-DATASET = All time best instance set VeRoLog competition
-NAME = tools over distance over vehicle days over vehicles with 100 requests over 5 days
+DATASET = ORTEC Test Set
+NAME = Instance 01
 

@@ -21,8 +21,7 @@ public class UpperPlanGen implements DataIO {
 	}
 
 	public UpperPlan planGen() {
-		UpperPlan plan = new UpperPlan();
-		plan = utils.planCreate();
+		UpperPlan plan = utils.planCreate();
 		return plan;
 	}
 }
