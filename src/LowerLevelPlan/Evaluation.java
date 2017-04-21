@@ -57,8 +57,8 @@ public class Evaluation implements DataIO {
 		for (int k = 0; k < numberOfTools; k++) {
 			totalToolCost += maximumNumberOfToolsInUse[k] * data.getToolList().get(k).getCostOfTools();
 		}
-		totalCost = totalDistance * config[DISTANCE_COST] + totalToolCost
-				+ maximumNumberOfVehicle * config[VEHICLE_COST] + totalNumberOfVehicle * config[VEHICLE_DAY_COST];
+		totalCost = (long) (totalDistance * data.getDistanceCost() + totalToolCost
+				+ maximumNumberOfVehicle * data.getVehicleCost() + totalNumberOfVehicle * data.getVehcileDayCost());
 
 		solutions.setTotalDistance(totalDistance);
 		solutions.setTotalVehicle(totalNumberOfVehicle);

@@ -14,6 +14,33 @@ public class BlackBoard implements DataIO {
 	private int[] toolStock;
 	private TreeMap<Integer, List<Integer>> requestToolMapping;
 	private TreeMap<Integer, List<Integer>> fixedDayDelivery;
+	private long distanceCost;
+	private long vehicleCost;
+	private long vehcileDayCost;
+
+	public long getVehcileDayCost() {
+		return vehcileDayCost;
+	}
+
+	public long getVehicleCost() {
+		return vehicleCost;
+	}
+
+	public void setVehicleCost(long vehicleCost) {
+		this.vehicleCost = vehicleCost;
+	}
+
+	public void setVehcileDayCost(long vehcileDayCost) {
+		this.vehcileDayCost = vehcileDayCost;
+	}
+
+	public long getDistanceCost() {
+		return distanceCost;
+	}
+
+	public void setDistanceCost(long distanceCost) {
+		this.distanceCost = distanceCost;
+	}
 
 	public TreeMap<Integer, List<Integer>> getRequestToolMapping() {
 		return requestToolMapping;
@@ -69,9 +96,10 @@ public class BlackBoard implements DataIO {
 
 	@Override
 	public String toString() {
-		return "BlackBoard [config=" + Arrays.toString(config) + ", toolList=" + toolList + ", toolStock="
-				+ Arrays.toString(toolStock) + ", requestToolMapping=" + requestToolMapping + ", fixedDayDelivery="
-				+ fixedDayDelivery + "]";
+		return "BlackBoard [config=" + Arrays.toString(config) + ", toolList=" + toolList + ", requests=" + requests
+				+ ", distance=" + Arrays.toString(distance) + ", toolStock=" + Arrays.toString(toolStock)
+				+ ", fixedDayDelivery=" + fixedDayDelivery + ", distanceCost=" + distanceCost + ", vehicleCost="
+				+ vehicleCost + ", vehcileDayCost=" + vehcileDayCost + "]";
 	}
 
 	public BlackBoard() {

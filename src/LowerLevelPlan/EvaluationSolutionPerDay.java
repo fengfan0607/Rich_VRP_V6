@@ -26,7 +26,7 @@ public class EvaluationSolutionPerDay implements DataIO {
 		// TODO Auto-generated constructor stub
 		data = bb;
 		this.config = data.getConfig();
-		distance = new int[config[NUM_OF_REQUESTS]][config[NUM_OF_REQUESTS]];
+		distance = new int[(int) config[NUM_OF_REQUESTS]][(int) config[NUM_OF_REQUESTS]];
 		distance = data.getDistance();
 		// dynamicStock = new int[data.getToolList().size()];
 		depotStock = new int[data.getToolList().size()];
@@ -34,7 +34,7 @@ public class EvaluationSolutionPerDay implements DataIO {
 		for (int i = 0; i < data.getToolList().size(); i++) {
 			depotStock[i] = data.getToolList().get(i).getNumOfTools();
 		}
-		numberOfToos = config[NUM_OF_TOOLS];
+		numberOfToos = (int) config[NUM_OF_TOOLS];
 	}
 
 	public int[] getDynamicStock() {
@@ -54,11 +54,11 @@ public class EvaluationSolutionPerDay implements DataIO {
 		int totalNumberOfVehicle = sed.getVehicleRoutes().size();
 		long toolCost = 0;
 		long totalCostPerDay = 0;
+		long totalvehicleCost = (long) totalNumberOfVehicle * data.getVehcileDayCost();
 		for (int i = 0; i < numberOfToos; i++) {
 			toolCost = toolInUsePerDay[i] * data.getToolList().get(i).getCostOfTools();
 		}
-		totalCostPerDay = totalDistance * config[DISTANCE_COST] + toolCost
-				+ totalNumberOfVehicle * config[VEHICLE_DAY_COST];
+		totalCostPerDay = totalDistance * config[DISTANCE_COST] + toolCost + totalvehicleCost;
 		sed.setToolCost(toolCost);
 		sed.setToolInUsePerDay(toolInUsePerDay);
 		sed.setTotalCostPerDay(totalCostPerDay);
@@ -66,7 +66,7 @@ public class EvaluationSolutionPerDay implements DataIO {
 		sed.setTotalDistance(totalDistance);
 		sed.setOutput(manufactorSed(sed));
 		sed.setDynamicStock(dynamicStock);
-//		System.err.println("cal" + Arrays.toString(dynamicStock));
+		// System.err.println("cal" + Arrays.toString(dynamicStock));
 		return sed;
 	}
 

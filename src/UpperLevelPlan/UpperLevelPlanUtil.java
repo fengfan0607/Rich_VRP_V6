@@ -58,8 +58,7 @@ public class UpperLevelPlanUtil implements DataIO {
 	}
 
 	public UpperPlan planCreate() {
-		// TODO Auto-generated method stub
-	
+		// TODO Auto-generated method stub	
 		UpperPlan up = new UpperPlan();
 		// insert fixed day delivery requests
 		TreeMap<Integer, List<Integer>> fixedDayPlan = data.getFixedDayDelivery();

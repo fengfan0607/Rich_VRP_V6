@@ -4,7 +4,7 @@ public class Tool {
 	private int ID;
 	private int size;
 	private int numOfTools;
-	private int costOfTools;
+	private long costOfTools;
 
 	public int getID() {
 		return ID;
@@ -40,11 +40,11 @@ public class Tool {
 		this.numOfTools = numOfTools;
 	}
 
-	public int getCostOfTools() {
+	public long getCostOfTools() {
 		return costOfTools;
 	}
 
-	public void setCostOfTools(int costOfTools) {
+	public void setCostOfTools(long costOfTools) {
 		this.costOfTools = costOfTools;
 	}
 }

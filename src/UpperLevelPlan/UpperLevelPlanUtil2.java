@@ -31,7 +31,7 @@ public class UpperLevelPlanUtil2 implements DataIO {
 	public UpperLevelPlanUtil2(BlackBoard bb) {
 		// TODO Auto-generated constructor stub
 		this.data = bb;
-		System.err.println(Arrays.toString(data.getConfig()));
+//		System.err.println(Arrays.toString(data.getConfig()));
 		config = data.getConfig();
 		numberOfDays = config[DAYS];
 		numberOfRequest = config[NUM_OF_REQUESTS];
@@ -54,6 +54,59 @@ public class UpperLevelPlanUtil2 implements DataIO {
 			List<Integer[]> list = new ArrayList<>();
 			associateList.add(list);
 		}
+	}
+
+	public int[][] planCreate1() {
+		// TODO Auto-generated method stub
+		// insert fixed day delivery requests
+		TreeMap<Integer, List<Integer>> fixedDayPlan = data.getFixedDayDelivery();
+		Set<Integer> keys = fixedDayPlan.keySet();
+		Iterator<Integer> itr = keys.iterator();
+		while (itr.hasNext()) {
+			int day = itr.next();
+			List<Integer> list = fixedDayPlan.get(day);
+			for (int i = 0; i < list.size(); i++) {
+				int rID = list.get(i);
+				Request curReq = requests.get(rID - 1);
+				if (!requestsFlag[curReq.getId() - 1]) {
+					confirmPlan(day - 1, curReq);
+					int dd = day - 1;
+					while (curReq.getAssociateRequestForPickUpDelivery().size() > 0) {
+						Request associateCurReq = findAssociationPickedUpDelivery1(curReq);
+						if (!requestsFlag[associateCurReq.getId() - 1]) {
+							confirmPlan(dd + curReq.getNumOfDaysRequest(), associateCurReq);
+							updateAssociateList(dd + curReq.getNumOfDaysRequest(), curReq.getId(),
+									associateCurReq.getId());
+						}
+						dd = dd + curReq.getNumOfDaysRequest();
+						curReq = associateCurReq;
+					}
+				}
+
+			}
+		}
+		// insert unfixed request
+		for (int i = 0; i < requests.size(); i++) {
+			if (requestsFlag[i]) {
+				continue;
+			} else {
+				Request curReq = requests.get(i);
+				// int day = curReq.getStart_Time() - 1;
+				int day = ThreadLocalRandom.current().nextInt(curReq.getStart_Time(), curReq.getEnd_Time() + 1);
+				confirmPlan(day - 1, curReq);
+				int dd = day - 1;
+				while (curReq.getAssociateRequestForPickUpDelivery().size() > 0) {
+					Request associateCurReq = findAssociationPickedUpDelivery1(curReq);
+					if (!requestsFlag[associateCurReq.getId() - 1]) {
+						confirmPlan(dd + curReq.getNumOfDaysRequest(), associateCurReq);
+						updateAssociateList(dd + curReq.getNumOfDaysRequest(), curReq.getId(), associateCurReq.getId());
+					}
+					dd = dd + curReq.getNumOfDaysRequest();
+					curReq = associateCurReq;
+				}
+			}
+		}
+		return plan;
 	}
 
 	public UpperPlan planCreate() {
@@ -130,10 +183,10 @@ public class UpperLevelPlanUtil2 implements DataIO {
 	}
 
 	public void updateAssociateList(int day, int pickUpReq, int deliverReq) {
-//		List<Integer[]> curDay = associateList.get(day);
-		Integer[] ass = new Integer[] { -1*pickUpReq, deliverReq };
+		// List<Integer[]> curDay = associateList.get(day);
+		Integer[] ass = new Integer[] { -1 * pickUpReq, deliverReq };
 		associateList.get(day).add(ass);
-//		associateList.add(day, curDay);
+		// associateList.add(day, curDay);
 	}
 
 	public void updateCounter() {
@@ -188,6 +241,7 @@ public class UpperLevelPlanUtil2 implements DataIO {
 		}
 		return cost;
 	}
+
 	public boolean checkToolUsed(UpperPlan ph) {
 		int[] maximumToolUsed = new int[numberOfTools];
 		int[][] plan = ph.getPlans();
@@ -215,7 +269,7 @@ public class UpperLevelPlanUtil2 implements DataIO {
 					return false;
 				}
 			}
-			toolUsedAll[i] =toolUsed; 
+			toolUsedAll[i] = toolUsed;
 			System.err.println("day" + (i + 1) + "estimated tool uesed" + Arrays.toString(toolUsed));
 		}
 		ph.setToolUsed(toolUsedAll);
@@ -238,9 +292,9 @@ public class UpperLevelPlanUtil2 implements DataIO {
 		return maximumRequestPerDay;
 	}
 
-	public UpperPlan adjustPlan(UpperPlan curPlan){
-		int[][] curToolUsed= curPlan.getToolUsed();
-		
-	}
+	// public UpperPlan adjustPlan(UpperPlan curPlan){
+	// int[][] curToolUsed= curPlan.getToolUsed();
+	//
+	// }
 
 }

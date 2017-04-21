@@ -2,25 +2,24 @@ package DataIO;
 
 public interface DataIO {
 
+	public static boolean runCase = false;
 
-
-	public static boolean runCase = true;
-	
 	//
 	// public static String fileNameTest =
 	// "testInstance/ParticipantsSuite/myTest/testInstance.txt";
-	// public static String titleTest = "DATASET = VeRoLog solver challenge 2017" + "\n" + "NAME = testInstance" + "\n\n";
-	
-	
+	// public static String titleTest = "DATASET = VeRoLog solver challenge
+	// 2017" + "\n" + "NAME = testInstance" + "\n\n";
+
 	public static String instance = "01";
 	public static String fileNameTest = "testInstance/ParticipantsSuite/ORTEC_Test/ORTEC_TEST_" + instance + ".txt";
 	public static String titleTest = "DATASET = ORTEC Test Set" + "\n" + "NAME = Instance " + instance + "\n\n";
 
 	public static String outputFileName = "testInstance/ParticipantsSuite/solution.txt";
-	public static String solutionFileName = "testInstance/ParticipantsSuite/ORTEC_Test/ORTEC_TEST_" + instance + ".sol.txt";
+	public static String solutionFileName = "testInstance/ParticipantsSuite/ORTEC_Test/ORTEC_TEST_" + instance
+			+ ".sol.txt";
 
 	// all time best competition
-	public static String alltimebes = "r100d5_2";
+	public static String alltimebes = "r100d5_3";
 	public static String fileNameAllTimeBest = "testInstance/ParticipantsSuite/AllTimeBest/VeRoLog_" + alltimebes
 			+ ".txt";
 	public static String titleAllTimeBest = "DATASET = All time best instance set VeRoLog competition" + "\n"

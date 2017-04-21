@@ -22,6 +22,33 @@ import test.test;
 public class mainFunction implements DataIO {
 	public static String title;
 	public static String testFile;
+	public static int[][] testPlan = new int[][] {
+			{ 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1,
+					1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0,
+					0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0,
+					1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1,
+					0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0 },
+			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0,
+					-1, 1, -1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0,
+					0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, -1, 0, 0, -1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, -1, -1, 0, 0, 0, 1, 0,
+					0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0,
+					0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1 },
+			{ 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, -1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, -1, 0, 0, 1, -1, 0, 0, 0, 0, 0, -1,
+					0, 0, 0, 0, -1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0,
+					1, 0, 0, 0, 1, -1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, -1, 1,
+					0, 1, 0, -1, -1, -1, 0, -1, -1, 0, -1, 1, 0, -1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 1, 1, -1, 0, 0, 0, 0,
+					0, 0, 0, 1, 0, -1, 1, 0, -1, 1, 0, 0, 0, -1, -1, 0, 0, 0, 0, 0, 0, -1 },
+			{ -1, 1, -1, 1, -1, -1, -1, -1, -1, 1, -1, 0, 0, 1, 0, 0, -1, 0, 1, 0, 0, 1, -1, 0, -1, 0, 0, 0, 1, -1, -1,
+					-1, 0, 0, -1, 0, -1, 0, 0, 0, -1, 0, -1, -1, -1, 0, -1, 1, -1, 1, -1, 0, 0, 0, 0, 0, -1, 1, -1, 0,
+					0, 0, -1, 0, 0, -1, 0, 1, 1, 0, 0, 0, 0, 1, -1, 0, -1, 1, 0, 0, -1, 1, 0, 0, 0, 1, 1, 1, -1, -1, 0,
+					-1, -1, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 1, 0, 0, -1, 0, 1, 0, -1, -1,
+					-1, 0, 0, -1, -1, 0, 0, -1, 0, 0, -1, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0, 1, -1, 1, -1, 0, 1, 0 },
+			{ 0, -1, 0, -1, 0, 0, 0, 0, 0, -1, 0, 0, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, 0, 0, 0, -1, -1, 0, -1, 0,
+					0, 0, -1, 0, 0, 0, 0, 0, 0, -1, 0, -1, 0, 0, 0, -1, 0, -1, 0, -1, 0, -1, -1, 0, -1, -1, 0, -1, 0,
+					-1, 0, -1, 0, -1, -1, 0, -1, -1, -1, -1, -1, 0, -1, -1, 0, -1, 0, -1, -1, 0, 0, -1, 0, -1, -1, -1,
+					-1, -1, 0, 0, 0, 0, 0, 0, 0, -1, 0, -1, -1, 0, -1, 0, 0, 0, -1, 0, 0, -1, 0, -1, -1, 0, 0, -1, 0,
+					-1, 0, -1, -1, -1, 0, 0, 0, 0, -1, 0, 0, -1, -1, 0, -1, -1, 0, 0, -1, -1, 0, -1, -1, 0, -1, 0, 0,
+					-1, 0, -1, 0, -1, -1, 0 } };
 
 	public static void main(String[] args) {
 		if (runCase) {
@@ -35,7 +62,7 @@ public class mainFunction implements DataIO {
 		DataRead dRead = new DataRead(testFile);
 		System.err.println("read data .....");
 		BlackBoard data = dRead.readData(new BlackBoard());
-//		System.err.println(data.getRequests());
+		// System.err.println(data.getRequests());
 		UpperPlanGen planGen = new UpperPlanGen(data);
 		// UpperPlan plan = new UpperPlan();
 		LocalSearch ls = new LocalSearch(data);
@@ -45,12 +72,12 @@ public class mainFunction implements DataIO {
 		UpperLevelPlanUtil2 utilPlan = new UpperLevelPlanUtil2(data);
 		for (int i = 0; i < 1; i++) {
 			UpperPlan plan = new UpperPlan();
-//			 plan.setPlans(readSolution.readPlan(data.getConfig()));
-			plan = planGen.planGen();
-			while(!utilPlan.checkToolUsed(plan)){
-				 planGen = new UpperPlanGen(data);
-				plan = planGen.planGen();
-			}
+			// plan.setPlans(readSolution.readPlan(data.getConfig()));
+			plan.setPlans(testPlan);
+//			while (!utilPlan.checkToolUsed(plan)) {
+//				planGen = new UpperPlanGen(data);
+//				plan = planGen.planGen();
+//			}
 			System.err.println(utilPlan.toolUsedCal(plan));
 			System.err.println(plan.toString());
 			plan.setID(i + 1);

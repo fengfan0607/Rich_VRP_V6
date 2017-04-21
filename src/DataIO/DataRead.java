@@ -36,6 +36,10 @@ public class DataRead implements DataIO {
 	public String fileName;
 	public int[][] distanceValue;
 	public int circle;
+	private long distanceCost;
+	private long vehicleCost;
+	private long vehcileDayCost;
+
 	public DataRead(String file) {
 		// TODO Auto-generated constructor stub
 		config = new int[CONFIG_SIZE];
@@ -46,7 +50,7 @@ public class DataRead implements DataIO {
 		customers = new ArrayList<>();
 		distance = new Distance();
 		this.fileName = file;
-		
+
 	}
 
 	public BlackBoard readData(BlackBoard blackBoard) {
@@ -66,10 +70,10 @@ public class DataRead implements DataIO {
 					String theDigits = CharMatcher.DIGIT.retainFrom(line);
 					if (line.contains("TOOLS")) {
 						config[NUM_OF_TOOLS] = Integer.valueOf(theDigits);
-						toolStocks = new int[config[NUM_OF_TOOLS]];
+						toolStocks = new int[(int) config[NUM_OF_TOOLS]];
 					} else if (line.contains("COORDINATES")) {
 						config[NUM_OF_CUSTOMER] = Integer.valueOf(theDigits);
-						distanceValue = new int[config[NUM_OF_CUSTOMER]][config[NUM_OF_CUSTOMER]];
+						distanceValue = new int[(int) config[NUM_OF_CUSTOMER]][(int) config[NUM_OF_CUSTOMER]];
 					} else if (line.contains("REQUESTS")) {
 						config[NUM_OF_REQUESTS] = Integer.valueOf(theDigits);
 					} else if (config[NUM_OF_TOOLS] != 0 && lineNum > 13 && lineNum <= 13 + config[NUM_OF_TOOLS]) {
@@ -79,7 +83,7 @@ public class DataRead implements DataIO {
 						tool.setID(Integer.valueOf(splited[0]));
 						tool.setSize(Integer.valueOf(splited[1]));
 						tool.setNumOfTools(Integer.valueOf(splited[2]));
-						tool.setCostOfTools(Integer.valueOf(splited[3]));
+						tool.setCostOfTools(Long.valueOf(splited[3]));
 						toolList.add(tool);
 						// toolStock.put(tool.getID(), tool.getNumOfTools());
 						toolStocks[tool.getID() - 1] = tool.getNumOfTools();
@@ -99,7 +103,7 @@ public class DataRead implements DataIO {
 							// customer.setRequests(new Requests());
 							customers.add(customer);
 						}
-					}else if(lineNum == 16 + config[NUM_OF_TOOLS] + config[NUM_OF_CUSTOMER]){
+					} else if (lineNum == 16 + config[NUM_OF_TOOLS] + config[NUM_OF_CUSTOMER]) {
 						distance.setDistance(distanceCal());
 					} else if (config[NUM_OF_REQUESTS] != 0
 							&& lineNum > 17 + config[NUM_OF_TOOLS] + config[NUM_OF_CUSTOMER] && lineNum <= 17
@@ -127,7 +131,7 @@ public class DataRead implements DataIO {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}		
+		}
 		requestHandle();
 		findAssociation();
 		blackBoard.setConfig(config);
@@ -137,16 +141,21 @@ public class DataRead implements DataIO {
 		blackBoard.setToolStock(toolStocks);
 		blackBoard.setRequestToolMapping(requestToolMapping);
 		blackBoard.setFixedDayDelivery(fixedDayDelivery);
+		blackBoard.setDistanceCost(distanceCost);
+		blackBoard.setVehcileDayCost(vehcileDayCost);
+		blackBoard.setVehicleCost(vehicleCost);
 		// System.err.println(blackBoard);
 		return blackBoard;
 	}
-	public void findNeighbour(){
-		
+
+	public void findNeighbour() {
+
 	}
+
 	public int[][] distanceCal() {
 		int maxDistance = Integer.MIN_VALUE;
 		int minDistance = Integer.MAX_VALUE;
-		
+
 		for (int i = 0; i < config[NUM_OF_CUSTOMER]; i++) {
 			int id1;
 			int x1;
@@ -211,12 +220,15 @@ public class DataRead implements DataIO {
 				break;
 			case 9:
 				config[VEHICLE_COST] = Integer.valueOf(theDigits);
+				vehicleCost = Long.valueOf(theDigits);
 				break;
 			case 10:
 				config[VEHICLE_DAY_COST] = Integer.valueOf(theDigits);
+				vehcileDayCost = Long.valueOf(theDigits);
 				break;
 			case 11:
 				config[DISTANCE_COST] = Integer.valueOf(theDigits);
+				distanceCost = Long.valueOf(theDigits);
 				break;
 			default:
 				break;
@@ -242,12 +254,12 @@ public class DataRead implements DataIO {
 					r2.getAssociateRequestForPickUpDelivery().add(r1.getId());
 					r2.getAssociateSet().add(r1.getId());
 				}
-				if(distanceValue[r1.getCustomerID()][r2.getCustomerID()]<circle){
-						r1.getNearByRequests().add(r2.getId());
-						r2.getNearByRequests().add(r1.getId());
+				if (distanceValue[r1.getCustomerID()][r2.getCustomerID()] < circle) {
+					r1.getNearByRequests().add(r2.getId());
+					r2.getNearByRequests().add(r1.getId());
 				}
-				
-				if(r1.getAssociateSet().contains(r2.getId())&&r1.getNearByRequests().contains(r2.getId())){
+
+				if (r1.getAssociateSet().contains(r2.getId()) && r1.getNearByRequests().contains(r2.getId())) {
 					r1.getMustTogether().add(r2.getId());
 				}
 				requests.set(i, r1);
@@ -278,7 +290,7 @@ public class DataRead implements DataIO {
 			} else {
 				requestToolMapping.get(toolKind).add(curRequest.getId());
 			}
-			
+
 		}
 	}
 }
