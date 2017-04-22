@@ -21,7 +21,7 @@ import dataModel.SolutionForEachDay;
 import dataModel.SolutionsAll;
 import dataModel.UpperPlan;
 
-public class routeGeneration implements DataIO {
+public class routeGenerationS1 implements DataIO {
 	BlackBoard dataModel;
 	int[][] distance;
 	int[] config;
@@ -33,7 +33,7 @@ public class routeGeneration implements DataIO {
 	StrategyMinimizeDistance minimizeDistance;
 	StrategyMinimizeToolUse minimizeToolUse;
 
-	public routeGeneration(BlackBoard bb) {
+	public routeGenerationS1(BlackBoard bb) {
 		// TODO Auto-generated constructor stub
 
 		dataModel = bb;
@@ -53,7 +53,7 @@ public class routeGeneration implements DataIO {
 		minimizeToolUse = new StrategyMinimizeToolUse(dataModel);
 	}
 
-	public SolutionsAll createSoltuions(UpperPlan up) {
+	public SolutionsAll createSoltuionByMiminiDistance(UpperPlan up) {
 		int[][] plans = up.getPlans();
 		SolutionForEachDay[] solutions = new SolutionForEachDay[up.getPlans().length];
 		int[] preDynamicStock = new int[dataModel.getToolList().size()];
@@ -64,8 +64,7 @@ public class routeGeneration implements DataIO {
 			SolutionForEachDay curBest = new SolutionForEachDay();
 			while (counter-- > 0) {
 				SolutionForEachDay sed = new SolutionForEachDay();
-				 TreeMap<Integer, List<Integer>> vechileRoutes =minimizeDistance.routeGen(plans[i]);
-//				TreeMap<Integer, List<Integer>> vechileRoutes = minimizeToolUse.routeGen(plans[i]);
+				TreeMap<Integer, List<Integer>> vechileRoutes = minimizeDistance.routeGen(plans[i]);
 				sed.setVehicleRoutes(vechileRoutes);
 				sed.setDayID(i + 1);
 				sed = getObjForDay(solutions, i, sed, preDynamicStock.clone());
@@ -85,7 +84,7 @@ public class routeGeneration implements DataIO {
 		sa.setSolutions(solutions);
 		return sa;
 	}
-
+ 
 	public boolean checkToolUse(int[] curUse) {
 		for (int i = 0; i < toolStock.length; i++) {
 			if (curUse[i] > toolStock[i]) {
@@ -100,8 +99,6 @@ public class routeGeneration implements DataIO {
 			int[] dynamicStock) {
 		espd.setDynamicStock(dynamicStock);
 		sed = espd.costCalPerDay(sed);
-		// System.err.println(sed.getDayID() + "dynamic stock" +
-		// Arrays.toString(sed.getDynamicStock()));
 		return sed;
 	}
 

@@ -31,7 +31,7 @@ public class UpperLevelPlanUtil2 implements DataIO {
 	public UpperLevelPlanUtil2(BlackBoard bb) {
 		// TODO Auto-generated constructor stub
 		this.data = bb;
-//		System.err.println(Arrays.toString(data.getConfig()));
+		// System.err.println(Arrays.toString(data.getConfig()));
 		config = data.getConfig();
 		numberOfDays = config[DAYS];
 		numberOfRequest = config[NUM_OF_REQUESTS];
@@ -291,10 +291,4 @@ public class UpperLevelPlanUtil2 implements DataIO {
 		}
 		return maximumRequestPerDay;
 	}
-
-	// public UpperPlan adjustPlan(UpperPlan curPlan){
-	// int[][] curToolUsed= curPlan.getToolUsed();
-	//
-	// }
-
 }

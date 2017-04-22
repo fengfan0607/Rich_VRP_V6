@@ -45,7 +45,6 @@ public class StrategyMinimizeDistance implements DataIO {
 				curPlan.add(-1 * requestID);
 			}
 		}
-
 		List<Integer> route = new ArrayList<>();
 		route.add(0);
 		int taskCounter = curPlan.size();
@@ -58,7 +57,6 @@ public class StrategyMinimizeDistance implements DataIO {
 				route = insertTask(route, task);
 			}
 		}
-		// System.err.println(route);
 		TreeMap<Integer, List<Integer>> vehicleMap = combined(splitRoute(route));
 		return vehicleMap;
 	}
@@ -95,13 +93,9 @@ public class StrategyMinimizeDistance implements DataIO {
 			int dis = splitList.get(i).getDistanceCost();
 			flag[i] = true;
 			confirmed++;
-			// routeSpec rNew = new routeSpec();
 			List<Integer> newRoute = new ArrayList<>(splitList.get(i).getRoute());
+			// if (confirmed <= splitList.size() - 2) {
 			while (confirmed < splitList.size() && dis < config[MAX_TRIP_DISTANCE]) {
-				int stucknumber = 0;
-				if (stucknumber++ == 100000) {
-					System.err.println("stuck in combine route");
-				}
 				int posNew = getRandomNum(splitList.size(), i);
 				routeSpec anotherRout = splitList.get(posNew);
 				if (flag[posNew]) {
@@ -113,11 +107,11 @@ public class StrategyMinimizeDistance implements DataIO {
 					dis = distanceCheckPerRoute(newRoute);
 					flag[posNew] = true;
 					confirmed++;
-				} else if (dis + anotherRout.getDistanceCost() > config[MAX_TRIP_DISTANCE]) {
+				} else if (dis + anotherRout.getDistanceCost() >= config[MAX_TRIP_DISTANCE]) {
 					break;
 				}
 			}
-
+			// }
 			vechileRoutes.put(vehcileIndex++, newRoute);
 		}
 		return vechileRoutes;
@@ -126,6 +120,10 @@ public class StrategyMinimizeDistance implements DataIO {
 	public int getRandomNum(int limit, int avoid) {
 		int n = ThreadLocalRandom.current().nextInt(0, limit);
 		while (n == avoid) {
+			int stucknumber = 0;
+			if (stucknumber++ == 100000) {
+				System.err.println("stuck in get random num");
+			}
 			n = ThreadLocalRandom.current().nextInt(0, limit);
 		}
 		return n;
@@ -214,8 +212,6 @@ public class StrategyMinimizeDistance implements DataIO {
 		default:
 			break;
 		}
-		// System.err.println("check interROute" + "pos:" + pos + route);
-		// System.err.println("get interROute" + interRoute);
 		return interRoute;
 	}
 

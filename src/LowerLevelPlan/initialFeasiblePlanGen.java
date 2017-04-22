@@ -1,6 +1,7 @@
 package LowerLevelPlan;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -19,6 +20,7 @@ public class initialFeasiblePlanGen implements DataIO {
 	// FeasiblityCheckForEachRoute checkForEachRoute;
 	List<Request> requests;
 	RouteValidator routeValidator;
+	EvaluationSolutionPerDay espd;
 
 	public initialFeasiblePlanGen(BlackBoard bb) {
 		// TODO Auto-generated constructor stub
@@ -31,6 +33,7 @@ public class initialFeasiblePlanGen implements DataIO {
 		// checkForEachRoute = new FeasiblityCheckForEachRoute(data);
 		requests = data.getRequests();
 		routeValidator = new RouteValidator(bb);
+		espd = new EvaluationSolutionPerDay(data);
 	}
 
 	public SolutionsAll intialSolutionGen(UpperPlan up) {
@@ -44,6 +47,9 @@ public class initialFeasiblePlanGen implements DataIO {
 
 		int[][] totalPlans = up.getPlans();
 		SolutionForEachDay[] solutionsAllDays = new SolutionForEachDay[data.getConfig()[DAYS]];
+		int[] preDynamicStock = new int[data.getToolList().size()];
+		preDynamicStock = Arrays.copyOf(data.getToolStock(), data.getToolStock().length);
+
 		for (int i = 0; i < totalPlans.length; i++) {
 			List<List<Integer>> routesPerDay = generateFeasibleRoutePerDay(totalPlans[i]);
 			SolutionForEachDay sed = new SolutionForEachDay();
@@ -51,9 +57,18 @@ public class initialFeasiblePlanGen implements DataIO {
 			sed.setVehicleRoutes(naiveMerge(routesPerDay));
 			sed = removeZero(sed);
 			solutionsAllDays[i] = sed;
+			sed = getObjForDay(solutionsAllDays, i, sed, preDynamicStock.clone());
+			preDynamicStock = Arrays.copyOf(sed.getDynamicStock(), data.getToolStock().length);
 		}
 		solutions.setSolutions(solutionsAllDays);
 		return solutions;
+	}
+
+	public SolutionForEachDay getObjForDay(SolutionForEachDay[] solutions, int day, SolutionForEachDay sed,
+			int[] dynamicStock) {
+		espd.setDynamicStock(dynamicStock);
+		sed = espd.costCalPerDay(sed);
+		return sed;
 	}
 
 	public List<List<Integer>> generateFeasibleRoutePerDay(int[] dayPlan) {

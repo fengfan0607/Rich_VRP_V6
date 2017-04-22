@@ -14,24 +14,12 @@ import dataModel.UpperPlan;
 public class GA implements DataIO {
 	public static String title;
 	public static String testFile;
-
-	public static void main(String[] args) {
-		if (runCase) {
-			title = titleTest;
-			testFile = fileNameTest;
-		} else {
-			title = titleAllTimeBest;
-			testFile = fileNameAllTimeBest;
-		}
-		DataOutPut.writeFile(outputFileName, title, true);
-		DataRead dRead = new DataRead(testFile);
-		System.err.println("read data .....");
-		BlackBoard data = dRead.readData(new BlackBoard());
+	public static int[][] GA_plan(BlackBoard data){
 		Population myPop = new Population(10, true, data);
 		int generationCount = 0;
 		double best = Double.MAX_VALUE;
 		Individual bestInd = new Individual(data);
-		while (generationCount < 1000) {
+		while (generationCount < 5000) {
 			generationCount++;
 
 			if (myPop.getFittest().getFitness() < best) {
@@ -43,32 +31,9 @@ public class GA implements DataIO {
 			myPop = Algorithm.evolvePop(myPop);
 		}
 		System.out.println("Solution found!");
-		System.out.println("Generation: " + generationCount);
+		System.out.println("Genera	tion: " + generationCount);
 		System.out.println("Genes:");
 		System.out.println(myPop.getFittest());
-
-		LocalSearch ls = new LocalSearch(data);
-		List<SolutionsAll> solutionSet = new ArrayList<>();
-		long bestCost = Long.MAX_VALUE;
-		SolutionsAll bestSolution = null;
-		UpperPlan plan = new UpperPlan();
-		plan.setPlans(bestInd.getChromsome());
-		for (int i = 0; i < 20; i++) {
-			plan.setID(i + 1);
-			SolutionsAll sa = ls.newLocalSearch(plan);
-			solutionSet.add(sa);
-			if (sa.getTotalCost() < bestCost) {
-				bestSolution = sa;
-				bestCost = bestSolution.getTotalCost();
-				System.err.println("current best" + bestSolution.toString());
-			}
-		}
-		for (SolutionsAll sa : solutionSet) {
-			System.err.println(sa.toString());
-		}
-		System.err.println("best solotuion" + bestSolution.toString());
-		// System.err.println(bestSolution.getOutput());
-		DataOutPut.writeFile(outputFileName, bestSolution.getOutput(), false);
-
-	}
+		return bestInd.getChromsome();
+	} 
 }

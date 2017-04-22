@@ -18,6 +18,12 @@ public class FitnessCal implements DataIO {
 		int[] depotStock = Arrays.copyOf(data.getToolStock(), numberOfTools);
 		int[] maximumToolUsed = new int[numberOfTools];
 		int[][] plan = individual.getChromsome();
+		int[] toolUsedMaimumPerDay = new int[numberOfTools];
+		int[] toolUsedMinimumPerDay = new int[numberOfTools];
+		for (int i = 0; i < numberOfTools; i++) {
+			toolUsedMaimumPerDay[i] = Integer.MIN_VALUE;
+			toolUsedMinimumPerDay[i] = Integer.MAX_VALUE;
+		}
 		for (int i = 0; i < plan.length; i++) {
 			int[] toolUsed = new int[numberOfTools];
 			for (int j = 0; j < data.getRequests().size(); j++) {
@@ -36,6 +42,8 @@ public class FitnessCal implements DataIO {
 			}
 			for (int k = 0; k < numberOfTools; k++) {
 				toolUsed[k] = depotStock[k] - dynamicStock[k];
+				toolUsedMaimumPerDay[k] = Math.max(toolUsedMaimumPerDay[k], toolUsed[k]);
+				toolUsedMinimumPerDay[k] = Math.min(toolUsedMinimumPerDay[k], toolUsed[k]);
 				if (toolUsed[k] > maximumToolUsed[k]) {
 					maximumToolUsed[k] = toolUsed[k];
 				}
@@ -43,6 +51,11 @@ public class FitnessCal implements DataIO {
 		}
 		double fitness = 0.0;
 		for (int k = 0; k < numberOfTools; k++) {
+			// if (maximumToolUsed[k] > depotStock[k]) {
+			// fitness += 100;
+			// }
+			// fitness += (toolUsedMaimumPerDay[k] - toolUsedMinimumPerDay[k]) /
+			// 2;
 			fitness += (double) maximumToolUsed[k] / depotStock[k];
 		}
 		return fitness;
