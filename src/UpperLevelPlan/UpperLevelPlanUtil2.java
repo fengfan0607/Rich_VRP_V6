@@ -2,6 +2,8 @@ package UpperLevelPlan;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +29,7 @@ public class UpperLevelPlanUtil2 implements DataIO {
 	int[] dynamicStock;
 	int[] config;
 	List<List<Integer[]>> associateList;
+	Set<Integer> hasAssociationReq;
 
 	public UpperLevelPlanUtil2(BlackBoard bb) {
 		// TODO Auto-generated constructor stub
@@ -54,6 +57,7 @@ public class UpperLevelPlanUtil2 implements DataIO {
 			List<Integer[]> list = new ArrayList<>();
 			associateList.add(list);
 		}
+		hasAssociationReq = new HashSet<>();
 	}
 
 	public int[][] planCreate1() {
@@ -71,8 +75,9 @@ public class UpperLevelPlanUtil2 implements DataIO {
 				if (!requestsFlag[curReq.getId() - 1]) {
 					confirmPlan(day - 1, curReq);
 					int dd = day - 1;
-					while (curReq.getAssociateRequestForPickUpDelivery().size() > 0) {
-						Request associateCurReq = findAssociationPickedUpDelivery1(curReq);
+					while (curReq.getAssociationTable().containsKey(day + curReq.getNumOfDaysRequest())) {
+						Request associateCurReq = findAssociationPickedUpDelivery1(
+								curReq.getAssociationTable().get(day + curReq.getNumOfDaysRequest()), curReq);
 						if (!requestsFlag[associateCurReq.getId() - 1]) {
 							confirmPlan(dd + curReq.getNumOfDaysRequest(), associateCurReq);
 							updateAssociateList(dd + curReq.getNumOfDaysRequest(), curReq.getId(),
@@ -91,86 +96,77 @@ public class UpperLevelPlanUtil2 implements DataIO {
 				continue;
 			} else {
 				Request curReq = requests.get(i);
-				// int day = curReq.getStart_Time() - 1;
-				int day = ThreadLocalRandom.current().nextInt(curReq.getStart_Time(), curReq.getEnd_Time() + 1);
+				int day = fingDayDeliver(curReq);
 				confirmPlan(day - 1, curReq);
-				int dd = day - 1;
-				while (curReq.getAssociateRequestForPickUpDelivery().size() > 0) {
-					Request associateCurReq = findAssociationPickedUpDelivery1(curReq);
+				while (curReq.getAssociationTable().containsKey(day + curReq.getNumOfDaysRequest())) {
+					Request associateCurReq = findAssociationPickedUpDelivery1(
+							curReq.getAssociationTable().get(day + curReq.getNumOfDaysRequest()), curReq);
 					if (!requestsFlag[associateCurReq.getId() - 1]) {
-						confirmPlan(dd + curReq.getNumOfDaysRequest(), associateCurReq);
-						updateAssociateList(dd + curReq.getNumOfDaysRequest(), curReq.getId(), associateCurReq.getId());
+						confirmPlan(day + curReq.getNumOfDaysRequest() - 1, associateCurReq);
+						updateAssociateList(day + curReq.getNumOfDaysRequest() - 1, curReq.getId(),
+								associateCurReq.getId());
 					}
-					dd = dd + curReq.getNumOfDaysRequest();
+					day = day + curReq.getNumOfDaysRequest();
 					curReq = associateCurReq;
 				}
 			}
 		}
+		printAssociation();
 		return plan;
 	}
 
-	public UpperPlan planCreate() {
-		// TODO Auto-generated method stub
-		UpperPlan up = new UpperPlan();
-		// insert fixed day delivery requests
-		TreeMap<Integer, List<Integer>> fixedDayPlan = data.getFixedDayDelivery();
-		Set<Integer> keys = fixedDayPlan.keySet();
-		Iterator<Integer> itr = keys.iterator();
-		while (itr.hasNext()) {
-			int day = itr.next();
-			List<Integer> list = fixedDayPlan.get(day);
-			for (int i = 0; i < list.size(); i++) {
-				int rID = list.get(i);
-				Request curReq = requests.get(rID - 1);
-				if (!requestsFlag[curReq.getId() - 1]) {
-					confirmPlan(day - 1, curReq);
-					int dd = day - 1;
-					while (curReq.getAssociateRequestForPickUpDelivery().size() > 0) {
-						Request associateCurReq = findAssociationPickedUpDelivery1(curReq);
-						if (!requestsFlag[associateCurReq.getId() - 1]) {
-							confirmPlan(dd + curReq.getNumOfDaysRequest(), associateCurReq);
-							updateAssociateList(dd + curReq.getNumOfDaysRequest(), curReq.getId(),
-									associateCurReq.getId());
-						}
-						dd = dd + curReq.getNumOfDaysRequest();
-						curReq = associateCurReq;
-					}
-				}
-
+	public void printAssociation() {
+		StringBuilder sBuilder = new StringBuilder();
+		for (int i = 0; i < associateList.size(); i++) {
+			sBuilder.append("day: " + (i + 1));
+			List<Integer[]> list = associateList.get(i);
+			for (int j = 0; j < list.size(); j++) {
+				sBuilder.append(Arrays.toString(list.get(j)));
 			}
+			sBuilder.append("\n");
 		}
-		// insert unfixed request
-		for (int i = 0; i < requests.size(); i++) {
-			if (requestsFlag[i]) {
-				continue;
-			} else {
-				Request curReq = requests.get(i);
-				// int day = curReq.getStart_Time() - 1;
-				int day = ThreadLocalRandom.current().nextInt(curReq.getStart_Time(), curReq.getEnd_Time() + 1);
-				confirmPlan(day - 1, curReq);
-				int dd = day - 1;
-				while (curReq.getAssociateRequestForPickUpDelivery().size() > 0) {
-					Request associateCurReq = findAssociationPickedUpDelivery1(curReq);
-					if (!requestsFlag[associateCurReq.getId() - 1]) {
-						confirmPlan(dd + curReq.getNumOfDaysRequest(), associateCurReq);
-						updateAssociateList(dd + curReq.getNumOfDaysRequest(), curReq.getId(), associateCurReq.getId());
-					}
-					dd = dd + curReq.getNumOfDaysRequest();
-					curReq = associateCurReq;
-				}
-			}
-		}
-		up.setPlans(plan);
-		up.setEstimateAvgRequstPerDay(requestDistributionCal(up));
-		up.setEstimateToolCost(toolUsedCal(up));
-		up.setAssociationEachDay(associateList);
-		return up;
+		System.err.println(sBuilder.toString());
 	}
 
-	public Request findAssociationPickedUpDelivery1(Request curRequest) {
-		List<Integer> associateRequestForPickUpDelivery = curRequest.getAssociateRequestForPickUpDelivery();
-		int randomaRequest = ThreadLocalRandom.current().nextInt(0, associateRequestForPickUpDelivery.size());
-		int requestId = associateRequestForPickUpDelivery.get(randomaRequest);
+	public Set<Integer> getHasAssociationReq() {
+		return hasAssociationReq;
+	}
+
+	public void setHasAssociationReq(Set<Integer> hasAssociationReq) {
+		this.hasAssociationReq = hasAssociationReq;
+	}
+
+	public int fingDayDeliver(Request curReq) {
+		Set<Integer> nearByReq = curReq.getNearByRequests();
+		Iterator<Integer> iterator = nearByReq.iterator();
+		int day = 0;
+		int potentialDay = -1;
+		while (iterator.hasNext()) {
+			Integer req = iterator.next();
+			day = requests.get(req - 1).getPlanedDay();
+			if (requestsFlag[req - 1] && day >= curReq.getStart_Time() && day <= curReq.getEnd_Time()) {
+				if (curReq.getNearByRequests().contains(requests.get(req - 1).getId())) {
+					return day;
+				}
+				potentialDay = day;
+			}
+		}
+		if (potentialDay != -1) {
+			return potentialDay;
+		}
+		day = ThreadLocalRandom.current().nextInt(curReq.getStart_Time(), curReq.getEnd_Time() + 1);
+		return day;
+	}
+
+	public Request findAssociationPickedUpDelivery1(List<Integer> list, Request pickUpReq) {
+		for (int i = 0; i < list.size(); i++) {
+			int reqId = list.get(i);
+			if (pickUpReq.getNearByRequests().contains(reqId)) {
+				return requests.get(reqId - 1);
+			}
+		}
+		int randomaRequest = ThreadLocalRandom.current().nextInt(0, list.size());
+		int requestId = list.get(randomaRequest);
 		Request associateRequest = requests.get(requestId - 1);
 		return associateRequest;
 	}
@@ -179,14 +175,15 @@ public class UpperLevelPlanUtil2 implements DataIO {
 		plan[day][r.getId() - 1] = 1;
 		plan[day + r.getNumOfDaysRequest()][r.getId() - 1] = -1;
 		requestsFlag[r.getId() - 1] = true;
+		r.setPlanedDay(day + 1);
 		updateCounter();
 	}
 
 	public void updateAssociateList(int day, int pickUpReq, int deliverReq) {
-		// List<Integer[]> curDay = associateList.get(day);
 		Integer[] ass = new Integer[] { -1 * pickUpReq, deliverReq };
 		associateList.get(day).add(ass);
-		// associateList.add(day, curDay);
+		hasAssociationReq.add(pickUpReq);
+		hasAssociationReq.add(deliverReq);
 	}
 
 	public void updateCounter() {

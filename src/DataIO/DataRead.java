@@ -122,6 +122,7 @@ public class DataRead implements DataIO {
 						request.setNumOfDaysRequest(Integer.valueOf(splited[4]));
 						request.setRequestToolKind(Integer.valueOf(splited[5]));
 						request.setRequestToolNumber(Integer.valueOf(splited[6]));
+						request.setAssociationTable(new Hashtable<>());
 						requests.add(request);
 					}
 				}
@@ -241,16 +242,15 @@ public class DataRead implements DataIO {
 			Request r1 = requests.get(i);
 			for (int j = 0; j < requests.size(); j++) {
 				Request r2 = requests.get(j);
-				if (r1.getRequestToolKind() == r2.getRequestToolKind()
-						&& r1.getRequestToolNumber() >= r2.getRequestToolNumber()
-						&& r1.getStart_Time() + r1.getNumOfDaysRequest() >= r2.getEnd_Time()
-						&& r1.getEnd_Time() + r1.getNumOfDaysRequest() <= r2.getEnd_Time()) {
+				if (r1.getId() == r2.getId()) {
+					continue;
+				}
+				if (checkPickUpDelivery(r1, r2) && !r1.getAssociateSet().contains(r2.getId())) {
+					r1.setAssociationTable(insertAsscoiation(r1, r2));
 					r1.getAssociateRequestForPickUpDelivery().add(r2.getId());
 					r1.getAssociateSet().add(r2.getId());
-				} else if (r1.getRequestToolKind() == r2.getRequestToolKind()
-						&& r2.getRequestToolNumber() >= r1.getRequestToolNumber()
-						&& r2.getStart_Time() + r2.getNumOfDaysRequest() >= r1.getEnd_Time()
-						&& r2.getEnd_Time() + r2.getNumOfDaysRequest() <= r1.getEnd_Time()) {
+				} else if (checkPickUpDelivery(r2, r1) && !r2.getAssociateSet().contains(r1.getId())) {
+					r2.setAssociationTable(insertAsscoiation(r2, r1));
 					r2.getAssociateRequestForPickUpDelivery().add(r1.getId());
 					r2.getAssociateSet().add(r1.getId());
 				}
@@ -266,6 +266,74 @@ public class DataRead implements DataIO {
 				requests.set(j, r2);
 			}
 		}
+	}
+
+	public Hashtable<Integer, List<Integer>> insertAsscoiation(Request pickUpReq, Request deliverReq) {
+		int pickUpEarlyTime = pickUpReq.getStart_Time() + pickUpReq.getNumOfDaysRequest();
+		int pickUpLateTime = pickUpReq.getEnd_Time() + pickUpReq.getNumOfDaysRequest();
+		int deliverEarlyTime = deliverReq.getStart_Time();
+		int deliverLateTime = deliverReq.getEnd_Time();
+		Hashtable<Integer, List<Integer>> assciateTable = pickUpReq.getAssociationTable();
+		if (pickUpEarlyTime >= deliverEarlyTime && pickUpEarlyTime <= deliverLateTime) {
+			for (int i = pickUpEarlyTime; i <= deliverLateTime; i++) {
+				if (!assciateTable.containsKey(i)) {
+					List<Integer> list = new ArrayList<>();
+					list.add(deliverReq.getId());
+					assciateTable.put(i, list);
+				} else {
+					List<Integer> list = new ArrayList<>();
+					list.addAll(assciateTable.get(i));
+					list.add(deliverReq.getId());
+					assciateTable.put(i, list);
+				}
+			}
+
+		} else if (pickUpLateTime >= deliverEarlyTime && pickUpLateTime <= deliverLateTime) {
+			for (int i = deliverEarlyTime; i <= pickUpLateTime; i++) {
+				if (!assciateTable.containsKey(i)) {
+					List<Integer> list = new ArrayList<>();
+					list.add(deliverReq.getId());
+					assciateTable.put(i, list);
+				} else {
+					List<Integer> list = new ArrayList<>();
+					list.addAll(assciateTable.get(i));
+					list.add(deliverReq.getId());
+					assciateTable.put(i, list);
+				}
+			}
+
+		} else if (pickUpEarlyTime <= deliverEarlyTime && pickUpLateTime >= deliverLateTime) {
+			for (int i = deliverEarlyTime; i <= deliverLateTime; i++) {
+				if (!assciateTable.containsKey(i)) {
+					List<Integer> list = new ArrayList<>();
+					list.add(deliverReq.getId());
+					assciateTable.put(i, list);
+				} else {
+					List<Integer> list = new ArrayList<>();
+					list.addAll(assciateTable.get(i));
+					list.add(deliverReq.getId());
+					assciateTable.put(i, list);
+				}
+			}
+		}
+		return assciateTable;
+
+	}
+
+	public boolean checkPickUpDelivery(Request pickUpReq, Request deliverReq) {
+		int pickUpEarlyTime = pickUpReq.getStart_Time() + pickUpReq.getNumOfDaysRequest();
+		int pickUpLateTime = pickUpReq.getEnd_Time() + pickUpReq.getNumOfDaysRequest();
+		int deliverEarlyTime = deliverReq.getStart_Time();
+		int deliverLateTime = deliverReq.getEnd_Time();
+		if (pickUpReq.getRequestToolKind() == deliverReq.getRequestToolKind()
+				&& pickUpReq.getRequestToolNumber() >= deliverReq.getRequestToolNumber()) {
+			if (!(pickUpEarlyTime > deliverLateTime || pickUpLateTime < deliverEarlyTime)) {
+				return true;
+			}
+
+		}
+		return false;
+
 	}
 
 	public void requestHandle() {

@@ -31,11 +31,12 @@ public class LocalSearch implements DataIO {
 
 	public SolutionsAll newLocalSearch(UpperPlan plan) {
 
-		SolutionsAll sa = irs1.createSoltuionByMiminiDistance(plan);
-		// SolutionsAll sa = irs2.crateSolutionByInterSwapReq(plan);
+		SolutionsAll sa1 = irs1.createSoltuionByMiminiDistance(plan);
+		// System.err.println("start inter swap");
+		// SolutionsAll sa2 = irs2.crateSolutionByInterSwapReq(sa1);
 		Evaluation evaluation = new Evaluation(data);
-		evaluation.costCal(sa);
-		return sa;
+		evaluation.costCal(sa1);
+		return sa1;
 	}
 
 }

@@ -1,5 +1,6 @@
 package dataModel;
 
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 
@@ -16,6 +17,25 @@ public class Request {
 	private Set<Integer> associateSet;
 	private Set<Integer> nearByRequests;
 	private List<Integer> mustTogether;
+	private Hashtable<Integer, List<Integer>> associationTable;
+	private int planedDay;
+
+	public int getPlanedDay() {
+		return planedDay;
+	}
+
+	public void setPlanedDay(int planedDay) {
+		this.planedDay = planedDay;
+	}
+
+	public Hashtable<Integer, List<Integer>> getAssociationTable() {
+		return associationTable;
+	}
+
+	public void setAssociationTable(Hashtable<Integer, List<Integer>> associationTable) {
+		this.associationTable = associationTable;
+	}
+
 	public List<Integer> getMustTogether() {
 		return mustTogether;
 	}
@@ -68,10 +88,8 @@ public class Request {
 	public String toString() {
 		return "Request [id=" + id + ", start_Time=" + start_Time + ", end_Time=" + end_Time + ", numOfDaysRequest="
 				+ numOfDaysRequest + ", requestToolKind=" + requestToolKind + ", requestToolNumber=" + requestToolNumber
-				+ ", associateRequestForPickUpDelivery=" + associateRequestForPickUpDelivery
-				+ ", associateRequestForDeliveryPickUp=" + associateRequestForDeliveryPickUp + ", customerID="
-				+ customerID + ", associateSet=" + associateSet + ", nearByRequests=" + nearByRequests
-				+ ", mustTogether=" + mustTogether + "]"+"\n";
+				+ ", customerID=" + customerID + ", nearByRequests=" + nearByRequests + ", associationTable="
+				+ associationTable + ", planedDay=" + planedDay + "]" + "\n";
 	}
 
 	public int getEnd_Time() {

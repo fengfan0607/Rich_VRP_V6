@@ -37,7 +37,7 @@ public class intraRouteSearch {
 			List<Integer> currentRoute = newVehicleRoutes.get(curVehicle);
 			List<Integer> swappedRoute = new ArrayList<>(performSwapForEachRoute(currentRoute));
 			int count = 0;
-			while (!checkForEachRoute.checkForEachRoute(swappedRoute) && count < 200) {
+			while (!checkForEachRoute.checkForEachRoute(swappedRoute) && count < 2000) {
 				count++;
 				swappedRoute = performSwapForEachRoute(swappedRoute);
 			}

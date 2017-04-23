@@ -7,8 +7,8 @@ import dataModel.Request;
 
 public class Algorithm {
 
-	private static final double uniformRate = 0.5;
-	private static final double mutationRate = 0.15;
+	private static final double uniformRate = 0.1;
+	private static final double mutationRate = 0.3;
 	private static final int tournamentSize = 5;
 	private static final boolean elitism = true;
 
@@ -77,9 +77,12 @@ public class Algorithm {
 				if (Math.random() <= mutationRate && plan[i][j] > 0) {
 					// Create random gene
 					Request selectReq = indiv.getData().getRequests().get(j);
-					int newDay = ThreadLocalRandom.current().nextInt(selectReq.getStart_Time(),
-							selectReq.getEnd_Time() + 1);
-					indiv.changePlan(i, j, newDay - 1);
+					if (!indiv.getHasAssciationReq().contains(selectReq.getId())) {
+						int newDay = ThreadLocalRandom.current().nextInt(selectReq.getStart_Time(),
+								selectReq.getEnd_Time() + 1);
+						indiv.changePlan(i, j, newDay - 1);
+					}
+
 				}
 			}
 		}

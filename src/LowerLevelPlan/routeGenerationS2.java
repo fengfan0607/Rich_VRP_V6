@@ -43,20 +43,18 @@ public class routeGenerationS2 implements DataIO {
 		espd = new EvaluationSolutionPerDay(dataModel);
 	}
 
-	public SolutionsAll crateSolutionByInterSwapReq(UpperPlan plan) {
-		initialFeasiblePlanGen init = new initialFeasiblePlanGen(dataModel);
-		SolutionsAll curBestSolution = init.intialSolutionGen(plan);
+	public SolutionsAll crateSolutionByInterSwapReq(SolutionsAll sa) {
+		// initialFeasiblePlanGen init = new initialFeasiblePlanGen(dataModel);
+		SolutionsAll curBestSolution = sa;
 		curBestSolution = evaluation.costCal(curBestSolution);
 		long curBest = curBestSolution.getTotalCost();
 		int conter = 0;
-		System.err.println("Inter search  start best--" + " :" + curBestSolution.toString());
-		while (conter < 100000) {
+		while (conter < 1000) {
 			SolutionsAll nextSolution = generateNewByInterSwap(curBestSolution);
 			nextSolution = evaluation.costCal(nextSolution);
 			if (nextSolution.getTotalCost() < curBest) {
 				curBestSolution = nextSolution;
 				curBest = nextSolution.getTotalCost();
-				System.err.println("Inter search cur best--" + " :" + curBestSolution.toString());
 			}
 			conter++;
 		}

@@ -1,6 +1,8 @@
 package UpperLevelGA;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import DataIO.DataIO;
 import LowerLevelPlan.interRouteSearch;
@@ -14,6 +16,7 @@ public class Individual implements DataIO {
 	private int[][] chromsome;
 	private BlackBoard data;
 	public int[][] toolUsed;
+	public Set<Integer> hasAssciationReq;
 
 	public int[][] getToolUsed() {
 		return FitnessCal.toolUsedCal(this);
@@ -27,6 +30,14 @@ public class Individual implements DataIO {
 		return data;
 	}
 
+	public Set<Integer> getHasAssciationReq() {
+		return hasAssciationReq;
+	}
+
+	public void setHasAssciationReq(Set<Integer> hasAssciationReq) {
+		this.hasAssciationReq = hasAssciationReq;
+	}
+
 	public void setData(BlackBoard data) {
 		this.data = data;
 	}
@@ -35,13 +46,14 @@ public class Individual implements DataIO {
 		// TODO Auto-generated constructor stub
 		data = bb;
 		chromsome = new int[data.getConfig()[DAYS]][data.getRequests().size()];
+		hasAssciationReq = new HashSet<>();
 	}
 
 	public void generateIndividual() {
 		UpperLevelPlanUtil2 util = new UpperLevelPlanUtil2(data);
 		// UpperPlan plan = util.planCreate();
-
 		chromsome = util.planCreate1();
+		hasAssciationReq = util.getHasAssociationReq();
 	}
 
 	public double getFitness() {

@@ -14,12 +14,13 @@ import dataModel.UpperPlan;
 public class GA implements DataIO {
 	public static String title;
 	public static String testFile;
-	public static int[][] GA_plan(BlackBoard data){
-		Population myPop = new Population(10, true, data);
+
+	public static int[][] GA_plan(BlackBoard data) {
+		Population myPop = new Population(1000, true, data);
 		int generationCount = 0;
 		double best = Double.MAX_VALUE;
 		Individual bestInd = new Individual(data);
-		while (generationCount < 5000) {
+		while (generationCount < 100) {
 			generationCount++;
 
 			if (myPop.getFittest().getFitness() < best) {
@@ -28,12 +29,12 @@ public class GA implements DataIO {
 			}
 			System.out.println("Generation: " + generationCount + " Fittest: " + best);
 			// myPop = new Population(10, true, data);
-			myPop = Algorithm.evolvePop(myPop);
+			// myPop = Algorithm.evolvePop(myPop);
 		}
 		System.out.println("Solution found!");
 		System.out.println("Genera	tion: " + generationCount);
 		System.out.println("Genes:");
 		System.out.println(myPop.getFittest());
 		return bestInd.getChromsome();
-	} 
+	}
 }

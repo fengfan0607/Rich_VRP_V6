@@ -24,12 +24,15 @@ public class FitnessCal implements DataIO {
 			toolUsedMaimumPerDay[i] = Integer.MIN_VALUE;
 			toolUsedMinimumPerDay[i] = Integer.MAX_VALUE;
 		}
+		int maximumReq = Integer.MIN_VALUE;
 		for (int i = 0; i < plan.length; i++) {
 			int[] toolUsed = new int[numberOfTools];
+			int reqNum = 0;
 			for (int j = 0; j < data.getRequests().size(); j++) {
 				if (plan[i][j] == 0) {
 					continue;
 				} else {
+					reqNum++;
 					Request request = data.getRequests().get(j);
 					int toolKind = request.getRequestToolKind();
 					int toolNumber = request.getRequestToolNumber();
@@ -40,6 +43,7 @@ public class FitnessCal implements DataIO {
 					}
 				}
 			}
+			maximumReq = Math.max(maximumReq, reqNum);
 			for (int k = 0; k < numberOfTools; k++) {
 				toolUsed[k] = depotStock[k] - dynamicStock[k];
 				toolUsedMaimumPerDay[k] = Math.max(toolUsedMaimumPerDay[k], toolUsed[k]);
@@ -54,10 +58,10 @@ public class FitnessCal implements DataIO {
 			// if (maximumToolUsed[k] > depotStock[k]) {
 			// fitness += 100;
 			// }
-			// fitness += (toolUsedMaimumPerDay[k] - toolUsedMinimumPerDay[k]) /
-			// 2;
+			// // fitness += 50 * toolUsedMaimumPerDay[k];
 			fitness += (double) maximumToolUsed[k] / depotStock[k];
 		}
+		fitness += 100 * maximumReq;
 		return fitness;
 	}
 

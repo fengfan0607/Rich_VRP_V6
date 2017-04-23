@@ -59,7 +59,7 @@ public class routeGenerationS1 implements DataIO {
 		int[] preDynamicStock = new int[dataModel.getToolList().size()];
 		preDynamicStock = Arrays.copyOf(dataModel.getToolStock(), dataModel.getToolStock().length);
 		for (int i = 0; i < plans.length; i++) {
-			int counter = 50;
+			int counter = 100;
 			long curBestCost = Long.MAX_VALUE;
 			SolutionForEachDay curBest = new SolutionForEachDay();
 			while (counter-- > 0) {
@@ -67,8 +67,10 @@ public class routeGenerationS1 implements DataIO {
 				TreeMap<Integer, List<Integer>> vechileRoutes = minimizeDistance.routeGen(plans[i]);
 				sed.setVehicleRoutes(vechileRoutes);
 				sed.setDayID(i + 1);
+				// *****************************************************
+				// *****************************************************
 				sed = getObjForDay(solutions, i, sed, preDynamicStock.clone());
-				if (counter == 49) {
+				if (counter == 99) {
 					curBest = sed;
 				}
 				if (checkToolUse(sed.getToolInUsePerDay()) && sed.getTotalCostPerDay() < curBestCost) {
@@ -77,14 +79,14 @@ public class routeGenerationS1 implements DataIO {
 				}
 			}
 			solutions[i] = curBest;
-			System.err.println(curBest.toString());
+			// System.err.println(curBest.toString());
 			preDynamicStock = Arrays.copyOf(curBest.getDynamicStock(), dataModel.getToolStock().length);
 		}
 		SolutionsAll sa = new SolutionsAll(1);
 		sa.setSolutions(solutions);
 		return sa;
 	}
- 
+
 	public boolean checkToolUse(int[] curUse) {
 		for (int i = 0; i < toolStock.length; i++) {
 			if (curUse[i] > toolStock[i]) {

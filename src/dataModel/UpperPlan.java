@@ -2,6 +2,7 @@ package dataModel;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 public class UpperPlan {
 	private int[][] plans;
@@ -9,6 +10,15 @@ public class UpperPlan {
 	private int estimateAvgRequstPerDay;
 	private List<List<Integer[]>> associationEachDay;
 	private int[][] toolUsed;
+	private Set<Integer> hasAssociationReq;
+
+	public Set<Integer> getHasAssociationReq() {
+		return hasAssociationReq;
+	}
+
+	public void setHasAssociationReq(Set<Integer> hasAssociationReq) {
+		this.hasAssociationReq = hasAssociationReq;
+	}
 
 	public int[][] getToolUsed() {
 		return toolUsed;

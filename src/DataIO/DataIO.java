@@ -19,7 +19,7 @@ public interface DataIO {
 			+ ".sol.txt";
 
 	// all time best competition
-	public static String alltimebes = "r100d5_3";
+	public static String alltimebes = "r100d5_5";
 	public static String fileNameAllTimeBest = "testInstance/ParticipantsSuite/AllTimeBest/VeRoLog_" + alltimebes
 			+ ".txt";
 	public static String titleAllTimeBest = "DATASET = All time best instance set VeRoLog competition" + "\n"

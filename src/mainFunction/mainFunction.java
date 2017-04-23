@@ -1,5 +1,6 @@
 package mainFunction;
 
+import java.sql.DatabaseMetaData;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,6 +41,9 @@ public class mainFunction implements DataIO {
 	public static String titleAllTimeBest5 = "DATASET = All time best instance set VeRoLog competition" + "\n"
 			+ "NAME = tools over distance over vehicle days over vehicles with 1000 requests over 30 days" + "\n\n";
 
+	public static String testFile = "testInstance/ParticipantsSuite/ORTEC_Test/ORTEC_Test_03.txt";
+	public static String testOutPut = "testInstance/ParticipantsSuite/ORTEC_Test_solution/ORTEC_Test_05_sol.txt";
+
 	public static void main(String[] args) {
 		String fileNameAllTimeBest = "testInstance/ParticipantsSuite/AllTimeBest/VeRoLog_";
 		String[] allTimeBest = new String[] { alltimebest1, alltimebest2, alltimebest3, alltimebest4, alltimebest5 };
@@ -52,9 +56,13 @@ public class mainFunction implements DataIO {
 			String fileName = fileNameAllTimeBest + allTimeBest[i] + ".txt";
 			String outputFileName = "testInstance/ParticipantsSuite/mySolutions/solution.txt";
 			DataRead dRead = new DataRead(fileName);
-			System.err.println("read data .....");
+			System.err.println("read data ....." + fileName);
 			BlackBoard data = dRead.readData(new BlackBoard());
-			generateSolutionForInstance(title[i], outputFileName, data, 5, 10);
+			// System.err.println(data.getRequests());
+			GA.GA_plan(data);
+			// generateSolutionForInstance(title[i], outputFileName, data, 10,
+			// 50);
+			// generateSolutionForInstance(title[i], testOutPut, data, 5, 5);
 		}
 		System.err.println("----" + solutionMap);
 	}
