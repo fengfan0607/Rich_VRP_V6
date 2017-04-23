@@ -1,7 +1,9 @@
 package UpperLevelGA;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import DataIO.DataIO;
@@ -17,9 +19,18 @@ public class Individual implements DataIO {
 	private BlackBoard data;
 	public int[][] toolUsed;
 	public Set<Integer> hasAssciationReq;
+	List<List<Integer[]>> associateList;
 
 	public int[][] getToolUsed() {
 		return FitnessCal.toolUsedCal(this);
+	}
+
+	public List<List<Integer[]>> getAssociateList() {
+		return associateList;
+	}
+
+	public void setAssociateList(List<List<Integer[]>> associateList) {
+		this.associateList = associateList;
 	}
 
 	public void setToolUsed(int[][] toolUsed) {
@@ -47,6 +58,7 @@ public class Individual implements DataIO {
 		data = bb;
 		chromsome = new int[data.getConfig()[DAYS]][data.getRequests().size()];
 		hasAssciationReq = new HashSet<>();
+		associateList = new ArrayList<>();
 	}
 
 	public void generateIndividual() {
@@ -54,6 +66,7 @@ public class Individual implements DataIO {
 		// UpperPlan plan = util.planCreate();
 		chromsome = util.planCreate1();
 		hasAssciationReq = util.getHasAssociationReq();
+		associateList = util.getAssociateList();
 	}
 
 	public double getFitness() {

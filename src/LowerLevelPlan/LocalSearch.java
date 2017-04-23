@@ -20,6 +20,7 @@ public class LocalSearch implements DataIO {
 	// intraRouteSearch intraSwap;
 	routeGenerationS1 irs1;
 	routeGenerationS2 irs2;
+	routeGenerationS3 irs3;
 
 	public LocalSearch(BlackBoard bb) {
 		// TODO Auto-generated constructor stub
@@ -27,13 +28,15 @@ public class LocalSearch implements DataIO {
 		evaluation = new Evaluation(bb);
 		irs1 = new routeGenerationS1(data);
 		irs2 = new routeGenerationS2(data);
+		irs3 = new routeGenerationS3(data);
 	}
 
 	public SolutionsAll newLocalSearch(UpperPlan plan) {
 
-		SolutionsAll sa1 = irs1.createSoltuionByMiminiDistance(plan);
+//		SolutionsAll sa1 = irs1.createSoltuionByMiminiDistance(plan);
 		// System.err.println("start inter swap");
 		// SolutionsAll sa2 = irs2.crateSolutionByInterSwapReq(sa1);
+		SolutionsAll sa1 = irs3.createSoltuionByMaximizeToolUse(plan);
 		Evaluation evaluation = new Evaluation(data);
 		evaluation.costCal(sa1);
 		return sa1;

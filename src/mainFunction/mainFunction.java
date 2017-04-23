@@ -14,6 +14,7 @@ import LowerLevelPlan.Evaluation;
 import LowerLevelPlan.LocalSearch;
 import LowerLevelPlan.RouteValidator;
 import UpperLevelGA.GA;
+import UpperLevelGA.Individual;
 import UpperLevelPlan.UpperLevelPlanUtil2;
 import UpperLevelPlan.UpperPlanGen;
 import dataModel.BlackBoard;
@@ -59,12 +60,24 @@ public class mainFunction implements DataIO {
 			System.err.println("read data ....." + fileName);
 			BlackBoard data = dRead.readData(new BlackBoard());
 			// System.err.println(data.getRequests());
-			GA.GA_plan(data);
-			// generateSolutionForInstance(title[i], outputFileName, data, 10,
-			// 50);
+//			Individual ind = GA.GA_plan(data);
+//			printAssociation(ind.getAssociateList());
+			 generateSolutionForInstance(title[i], outputFileName, data, 1,1);
 			// generateSolutionForInstance(title[i], testOutPut, data, 5, 5);
 		}
 		System.err.println("----" + solutionMap);
+	}
+	public static void printAssociation(List<List<Integer[]>> associateList) {
+		StringBuilder sBuilder = new StringBuilder();
+		for (int i = 0; i < associateList.size(); i++) {
+			sBuilder.append("day: " + (i + 1));
+			List<Integer[]> list = associateList.get(i);
+			for (int j = 0; j < list.size(); j++) {
+				sBuilder.append(Arrays.toString(list.get(j)));
+			}
+			sBuilder.append("\n");
+		}
+		System.err.println(sBuilder.toString());
 	}
 
 	public static void generateSolutionForInstance(String outputFileTitle, String outputFile, BlackBoard data,
@@ -76,10 +89,11 @@ public class mainFunction implements DataIO {
 			List<SolutionsAll> solutionSet = new ArrayList<>();
 			DataOutPut.writeFile(outputFile + counter, outputFileTitle, true);
 			// use GA to generate upper plan
-			int[][] GA_plan = new int[data.getConfig()[DAYS]][data.getRequests().size()];
-			GA_plan = GA.GA_plan(data);
+//			int[][] GA_plan = new int[data.getConfig()[DAYS]][data.getRequests().size()];
+			Individual GA_plan = GA.GA_plan(data);
 			UpperPlan plan = new UpperPlan();
-			plan.setPlans(GA_plan);
+			plan.setPlans(GA_plan.getChromsome());
+			plan.setAssociateList(GA_plan.getAssociateList());
 			// lower scheduling
 			long bestCost = Long.MAX_VALUE;
 			UpperLevelPlanUtil2 utilPlan = new UpperLevelPlanUtil2(data);

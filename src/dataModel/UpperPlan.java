@@ -11,9 +11,17 @@ public class UpperPlan {
 	private List<List<Integer[]>> associationEachDay;
 	private int[][] toolUsed;
 	private Set<Integer> hasAssociationReq;
-
+	private List<List<Integer[]>> associateList;
 	public Set<Integer> getHasAssociationReq() {
 		return hasAssociationReq;
+	}
+
+	public List<List<Integer[]>> getAssociateList() {
+		return associateList;
+	}
+
+	public void setAssociateList(List<List<Integer[]>> associateList) {
+		this.associateList = associateList;
 	}
 
 	public void setHasAssociationReq(Set<Integer> hasAssociationReq) {

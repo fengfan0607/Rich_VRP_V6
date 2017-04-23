@@ -10,6 +10,7 @@ import javax.xml.crypto.Data;
 import DataIO.DataIO;
 import dataModel.BlackBoard;
 import dataModel.Request;
+import dataModel.routeSpec;
 
 public class StrategyMinimizeDistance implements DataIO {
 	BlackBoard dataModel;

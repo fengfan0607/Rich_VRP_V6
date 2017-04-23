@@ -1,4 +1,4 @@
-package LowerLevelPlan;
+package dataModel;
 
 import java.util.List;
 

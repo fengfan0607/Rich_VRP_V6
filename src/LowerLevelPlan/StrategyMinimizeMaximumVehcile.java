@@ -1,7 +1,10 @@
 package LowerLevelPlan;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -35,223 +38,78 @@ public class StrategyMinimizeMaximumVehcile implements DataIO {
 	}
 
 	public TreeMap<Integer, List<Integer>> routeGen(int[] dayPlannedTasks, List<Integer[]> assciateReq) {
-		List<Integer> curPlan = new ArrayList<>();
+		TreeMap<Integer, List<Integer>> route = new TreeMap<>();
+		Set<Integer> plannedTask = new HashSet<>();
+		for (int i = 0; i < assciateReq.size(); i++) {
+			List<Integer> list = new ArrayList<>();
+			list.add(0);
+			list.add(assciateReq.get(i)[0]);
+			list.add(assciateReq.get(i)[1]);
+			list.add(0);
+			route.put(i, list);
+			plannedTask.add(assciateReq.get(i)[0]);
+			plannedTask.add(assciateReq.get(i)[1]);
+		}
+
+		List<Integer> remainingTaks = new ArrayList<>();
 		for (int i = 0; i < dayPlannedTasks.length; i++) {
-			if (dayPlannedTasks[i] > 0) {
-				int requestID = requests.get(i).getId();
-				curPlan.add(requestID);
-			} else if (dayPlannedTasks[i] < 0) {
-				int requestID = requests.get(i).getId();
-				curPlan.add(-1 * requestID);
+			if (!plannedTask.contains(dayPlannedTasks[i])) {
+				remainingTaks.add(dayPlannedTasks[i]);
 			}
 		}
-		List<Integer> route = new ArrayList<>();
-		route.add(0);
-		int taskCounter = curPlan.size();
-		while (taskCounter-- > 0) {
-			int task = selectTask(curPlan);
-			if (route.size() == 1) {
-				route.add(task);
-				route.add(0);
-			} else {
-				route = insertTask(route, task);
-			}
-		}
-		TreeMap<Integer, List<Integer>> vehicleMap = combined(splitRoute(route));
-		return vehicleMap;
-	}
-
-	public List<routeSpec> splitRoute(List<Integer> route) {
-		int point = 1;
-		List<routeSpec> splitList = new ArrayList<>();
-		for (int i = 1; i < route.size(); i++) {
-			if (route.get(i) == 0) {
-				List<Integer> list = new ArrayList<>(route.subList(point, i + 1));
-				list.add(0, 0);
-				if (distanceCheckPerRoute(list) > config[MAX_TRIP_DISTANCE])
-					System.err.println(distanceCheckPerRoute(list) + ":" + list);
-				routeSpec rs = new routeSpec(distanceCheckPerRoute(list), list);
-				point = i + 1;
-				splitList.add(rs);
-			}
-		}
-		return splitList;
-	}
-
-	public TreeMap<Integer, List<Integer>> combined(List<routeSpec> splitList) {
-		TreeMap<Integer, List<Integer>> vechileRoutes = new TreeMap<>();
-		boolean[] flag = new boolean[splitList.size()];
-		for (int i = 0; i < flag.length; i++) {
-			flag[i] = false;
-		}
-		int confirmed = 0;
-		int vehcileIndex = 1;
-		for (int i = 0; i < splitList.size(); i++) {
-			if (flag[i]) {
-				continue;
-			}
-			int dis = splitList.get(i).getDistanceCost();
-			flag[i] = true;
-			confirmed++;
-			List<Integer> newRoute = new ArrayList<>(splitList.get(i).getRoute());
-			// if (confirmed <= splitList.size() - 2) {
-			while (confirmed < splitList.size() && dis < config[MAX_TRIP_DISTANCE]) {
-				int posNew = getRandomNum(splitList.size(), i);
-				routeSpec anotherRout = splitList.get(posNew);
-				if (flag[posNew]) {
-					continue;
-				}
-				if (!flag[posNew] && dis + anotherRout.getDistanceCost() < config[MAX_TRIP_DISTANCE]) {
-					newRoute.remove(newRoute.size() - 1);
-					newRoute.addAll(newRoute.size(), anotherRout.getRoute());
-					dis = distanceCheckPerRoute(newRoute);
-					flag[posNew] = true;
-					confirmed++;
-				} else if (dis + anotherRout.getDistanceCost() >= config[MAX_TRIP_DISTANCE]) {
-					break;
-				}
-			}
-			// }
-			vechileRoutes.put(vehcileIndex++, newRoute);
-		}
-		return vechileRoutes;
-	}
-
-	public int getRandomNum(int limit, int avoid) {
-		int n = ThreadLocalRandom.current().nextInt(0, limit);
-		while (n == avoid) {
-			n = ThreadLocalRandom.current().nextInt(0, limit);
-		}
-		return n;
-	}
-
-	public List<Integer> insertTask(List<Integer> route, int task) {
-		List<Integer> beforeInsert = new ArrayList<>(route);
-		List<Integer> bestRoute = new ArrayList<>();
-		beforeInsert = insertTaskToPos(task, route.size(), beforeInsert, 2);
-		bestRoute = new ArrayList<>(beforeInsert);
-		// System.err.println(bestRoute);
-		int curDistance = distanceCheckPerRoute(bestRoute);
-		List<Integer> interRoute = null;
-		for (int i = 1; i < route.size(); i++) {
-			if (i == 0) {
-				List<Integer> r = new ArrayList<>(route);
-				r = insertTaskToPos(task, 0, r, 3);
-				interRoute = getInterRoute(0, r, 3);
-				if (interRoute.get(0) != 0) {
-					interRoute.add(0, 0);
-				} else if (interRoute.get(interRoute.size() - 1) != 0) {
-					interRoute.add(0);
-				}
-				if (distanceCheckPerRoute(interRoute) <= config[MAX_TRIP_DISTANCE]
-						&& distanceCheckPerRoute(r) < curDistance && capacityCheckForSingleRoute(r)) {
-					bestRoute = new ArrayList<>(r);
-					curDistance = distanceCheckPerRoute(r);
-				}
-				continue;
-			}
-			for (int j = 1; j <= 3; j++) {
-				List<Integer> r = new ArrayList<>(route);
-				// System.err.println("beforeinsert" + route);
-				r = insertTaskToPos(task, i, r, j);
-				// System.err.println("inserted" + r);
-				interRoute = getInterRoute(i, r, j);
-				if (interRoute.get(0) != 0) {
-					interRoute.add(0, 0);
-				} else if (interRoute.get(interRoute.size() - 1) != 0) {
-					interRoute.add(0);
-				}
-				// System.err.println("interRoute" + interRoute);
-				if (distanceCheckPerRoute(interRoute) <= config[MAX_TRIP_DISTANCE]
-						&& distanceCheckPerRoute(r) < curDistance && capacityCheckForSingleRoute(r)) {
-					bestRoute = new ArrayList<>(r);
-					curDistance = distanceCheckPerRoute(r);
-				}
-			}
-		}
-
-		return bestRoute;
-	}
-
-	public List<Integer> getInterRoute(int pos, List<Integer> route, int type) {
-		int start = 0;
-		int end = 0;
-		List<Integer> interRoute = null;
-		switch (type) {
-		case 1:
-			start = pos;
-			end = pos;
-			while (route.get(start) != 0) {
-				start--;
-			}
-			while (route.get(end) != 0) {
-				end++;
-			}
-			interRoute = new ArrayList<>(route.subList(start, end + 1));
-			break;
-		case 2:
-			start = pos;
-			end = pos + 1;
-			while (route.get(start) != 0) {
-				start--;
-			}
-			interRoute = new ArrayList<>(route.subList(start, end + 1));
-			break;
-		case 3:
-			start = pos;
-			end = pos + 1;
-			while (route.get(end) != 0) {
-				end++;
-			}
-			interRoute = new ArrayList<>(route.subList(start, end + 1));
-			break;
-		default:
-			break;
-		}
-		return interRoute;
-	}
-
-	/*
-	 * type 1: insert task type 2: insert task,0 type 3: insert 0,task
-	 */
-	public List<Integer> insertTaskToPos(int task, int pos, List<Integer> route, int type) {
-		switch (type) {
-		case 1:
-			route.add(pos, task);
-			break;
-		case 2:
-			if ((pos + 1 < route.size() && route.get(pos + 1) != 0) || pos == route.size()) {
-				route.add(pos, task);
-				route.add(pos + 1, 0);
-			} else {
-				route.add(pos, task);
-			}
-
-			break;
-		case 3:
-			if ((pos - 1 > 0 && route.get(pos - 1) != 0) || pos == 0) {
-				route.add(pos, 0);
-				route.add(pos + 1, task);
-			} else {
-				route.add(pos, task);
-			}
-
-			break;
-		}
+		System.err.println(route);
 		return route;
-
 	}
 
-	public int selectTask(List<Integer> list) {
-		int n = list.size();
-		int pos = ThreadLocalRandom.current().nextInt(0, n);
-		int task = list.get(pos);
-		list.remove(pos);
-		return task;
+	public void insertRouteToMap(List<Integer> route, TreeMap<Integer, List<Integer>> routeMap) {
+		
+	}
+
+	public List<Integer> insertTaskToRoute(int task, List<Integer> route) {
+		if (route.size() >= 3) {
+			for (int i = 1; i < route.size() - 1; i++) {
+				List<Integer> newRoute = new ArrayList<>(route);
+				newRoute.add(i, task);
+				if (route.get(i - 1) == 0) {
+					Request curReq = requests.get(Math.abs(task) - 1);
+					if (curReq.getNearByRequests().contains(Math.abs(route.get(i))) && routeValid(newRoute)) {
+						return newRoute;
+					}
+				}
+			}
+		}
+		List<Integer> newRoute = new ArrayList<>();
+		newRoute.add(0);
+		newRoute.add(task);
+		newRoute.add(0);
+		return newRoute;
+	}
+
+	public boolean routeValid(List<Integer> route) {
+		if (distanceCheckPerRoute(route) < config[MAX_TRIP_DISTANCE] && capacityCheckForSingleRoute(route)) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean canCombine(List<Integer> r1, List<Integer> r2) {
+		List<Integer> newRoute = new ArrayList<>(r1);
+		newRoute.remove(newRoute.size() - 1);
+		newRoute.addAll(newRoute.size(), r2);
+		if (distanceCheckPerRoute(newRoute) < config[MAX_TRIP_DISTANCE] && capacityCheckForSingleRoute(newRoute)) {
+			return true;
+		}
+		return false;
+	}
+
+	public List<Integer> combineRoute(List<Integer> r1, List<Integer> r2) {
+		List<Integer> newRoute = new ArrayList<>(r1);
+		newRoute.remove(newRoute.size() - 1);
+		newRoute.addAll(newRoute.size(), r2);
+		return newRoute;
 	}
 
 	public int distanceCheckPerRoute(List<Integer> routes) {
-
 		int totalDistance = 0;
 		for (int j = 0; j < routes.size() - 1; j++) {
 			int pos1 = 0;

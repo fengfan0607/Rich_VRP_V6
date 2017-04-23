@@ -30,7 +30,8 @@ public class UpperLevelPlanUtil2 implements DataIO {
 	int[] config;
 	List<List<Integer[]>> associateList;
 	Set<Integer> hasAssociationReq;
-
+//	int[] currentPlan;
+//	int maximumReq;
 	public UpperLevelPlanUtil2(BlackBoard bb) {
 		// TODO Auto-generated constructor stub
 		this.data = bb;
@@ -58,6 +59,16 @@ public class UpperLevelPlanUtil2 implements DataIO {
 			associateList.add(list);
 		}
 		hasAssociationReq = new HashSet<>();
+//		maximumReq = Integer.MIN_VALUE;
+//		currentPlan = new int[numberOfDays];
+	}
+
+	public List<List<Integer[]>> getAssociateList() {
+		return associateList;
+	}
+
+	public void setAssociateList(List<List<Integer[]>> associateList) {
+		this.associateList = associateList;
 	}
 
 	public int[][] planCreate1() {

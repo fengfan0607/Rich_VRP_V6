@@ -8,6 +8,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import DataIO.DataIO;
 import dataModel.BlackBoard;
 import dataModel.Request;
+import dataModel.routeSpec;
 
 public class StrategyMinimizeToolUse implements DataIO {
 	BlackBoard dataModel;
